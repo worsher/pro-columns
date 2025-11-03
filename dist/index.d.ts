@@ -4,8 +4,10 @@ import { ProColumnsType } from '../type';
  * Columns 处理器
  * 功能：
  * 1. 处理 enums 映射：将字段中的 enumKey 转换为实际的 valueEnum
- * 2. 应用策略处理：通过 Strategy 处理器应用所有配置的策略（支持场景）
- * 3. 返回处理后的 columns
+ * 2. 应用全局运行时策略：将 applyStrategies 合并到每个 column 的策略列表中
+ * 3. 应用针对性策略：将 columnStrategies 应用到指定的 column
+ * 4. 应用策略处理：通过 Strategy 处理器应用所有配置的策略（支持场景）
+ * 5. 返回处理后的 columns
  */
 export declare const Columns: (props: ColumnsProps) => ProColumnsType.ColumnType[];
 
@@ -13,6 +15,19 @@ declare type ColumnsProps = {
     columns: ProColumnsType.ColumnType[];
     enums?: Record<string, any>;
     scene?: ProColumnsType.Scene;
+    /** 运行时应用的策略（会添加到每个 column 的策略列表中） */
+    applyStrategies?: ProColumnsType.StrategyItem[];
+    /** 是否使用 merge 模式合并策略（默认 true）。true=合并策略，false=替换策略 */
+    mergeMode?: boolean;
+    /** 针对特定 column 的策略配置 */
+    columnStrategies?: Array<{
+        /** 目标 column 的 dataIndex */
+        dataIndex: string;
+        /** 要应用的策略列表 */
+        strategies: ProColumnsType.StrategyItem[];
+        /** 是否使用 merge 模式（默认 true）。true=合并，false=替换该 column 的所有策略 */
+        mergeMode?: boolean;
+    }>;
 };
 
 /**
@@ -33,10 +48,27 @@ export declare const Component: {
      * 转换 columns 为指定组件的格式
      * @param name 组件名称
      * @param columns 原始 columns
-     * @param enums 枚举字典（可选）
-     * @param scene 场景（可选，如不提供则自动推断）
+     * @param options 配置选项
      */
-    transform<T = any>(name: string, columns: ProColumnsType.ColumnType[], enums?: Record<string, any>, scene?: ProColumnsType.Scene): T[];
+    transform<T = any>(name: string, columns: ProColumnsType.ColumnType[], options?: {
+        /** 枚举字典 */
+        enums?: Record<string, any>;
+        /** 场景（如不提供则自动推断） */
+        scene?: ProColumnsType.Scene;
+        /** 运行时应用的策略（会添加到每个 column 的策略列表中） */
+        applyStrategies?: ProColumnsType.StrategyItem[];
+        /** 是否使用 merge 模式合并策略（默认 true） */
+        mergeMode?: boolean;
+        /** 针对特定 column 的策略配置 */
+        columnStrategies?: Array<{
+            /** 目标 column 的 dataIndex */
+            dataIndex: string;
+            /** 要应用的策略列表 */
+            strategies: ProColumnsType.StrategyItem[];
+            /** 是否使用 merge 模式（默认 true）。true=合并，false=替换该 column 的所有策略 */
+            mergeMode?: boolean;
+        }>;
+    }): T[];
     /**
      * 获取所有已注册的适配器名称
      */

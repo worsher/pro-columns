@@ -171,6 +171,172 @@ const advancedColumns = [
   },
 ]
 
+// 方式4：运行时策略覆盖（最灵活的方式）
+function Example3() {
+  // 基础 columns 定义（可能来自其他模块或配置）
+  const baseColumns = [
+    {
+      title: '商品名称',
+      dataIndex: 'productName',
+      valueType: 'text' as const,
+    },
+    {
+      title: '价格',
+      dataIndex: 'price',
+      valueType: 'money' as const,
+    },
+  ]
+
+  // 场景1：ProTable - 运行时添加 table 专用策略
+  const tableColumns = Component.transform('proTable', baseColumns, {
+    enums: { statusEnum },
+    applyStrategies: [
+      Width({ table: 150 }),  // 统一设置所有列宽度为 150
+      Tooltip({ content: '点击查看详情' }),  // 添加统一的 tooltip
+    ],
+  })
+
+  // 场景2：ProForm - 运行时替换所有策略，只应用表单相关策略
+  const formFields = Component.transform('proForm', baseColumns, {
+    enums: { statusEnum },
+    applyStrategies: [
+      Width({ form: 'lg' }),  // 表单字段统一使用 lg 宽度
+      Required(),  // 所有字段必填
+      Placeholder(),  // 添加占位符
+    ],
+    mergeMode: false,  // 替换模式：忽略 baseColumns 中定义的策略
+  })
+
+  // 场景3：动态策略 - 根据用户权限应用不同策略
+  const isAdmin = true
+  const dynamicColumns = Component.transform('proTable', baseColumns, {
+    enums: { statusEnum },
+    applyStrategies: isAdmin
+      ? [
+          Width({ table: 200 }),  // 管理员看到更宽的列
+          Tooltip({ content: '管理员可编辑' }),
+        ]
+      : [
+          Width({ table: 120 }),  // 普通用户看到较窄的列
+        ],
+  })
+
+  return (
+    <>
+      <ProTable columns={tableColumns} dataSource={mockData} />
+      <BetaSchemaForm columns={formFields} />
+      <ProTable columns={dynamicColumns} dataSource={mockData} />
+    </>
+  )
+}
+
+// 方式5：针对特定 Column 的策略配置（最精确的控制）
+function Example4() {
+  // 基础 columns 定义
+  const baseColumns = [
+    {
+      title: '商品名称',
+      dataIndex: 'productName',
+      valueType: 'text' as const,
+    },
+    {
+      title: '价格',
+      dataIndex: 'price',
+      valueType: 'money' as const,
+    },
+    {
+      title: '库存',
+      dataIndex: 'stock',
+      valueType: 'digit' as const,
+    },
+  ]
+
+  // 场景1：只对特定字段应用策略
+  const tableColumns = Component.transform('proTable', baseColumns, {
+    enums: { statusEnum },
+    // 全局策略：所有列默认 100px
+    applyStrategies: [Width({ table: 100 })],
+    // 针对性策略：只对特定列应用
+    columnStrategies: [
+      {
+        dataIndex: 'productName',
+        strategies: [Width({ table: 200 }), Tooltip({ content: '商品名称' })],
+        mergeMode: true, // 合并模式：保留全局策略，追加针对性策略
+      },
+      {
+        dataIndex: 'price',
+        strategies: [Width({ table: 150 }), Format({ type: 'money', precision: 2 })],
+        mergeMode: false, // 替换模式：忽略全局策略，只用针对性策略
+      },
+    ],
+  })
+
+  // 场景2：表单中只对必填字段添加验证
+  const formFields = Component.transform('proForm', baseColumns, {
+    enums: { statusEnum },
+    columnStrategies: [
+      {
+        dataIndex: 'productName',
+        strategies: [Required(), Placeholder()],
+      },
+      {
+        dataIndex: 'price',
+        strategies: [Required(), Format({ type: 'money' })],
+      },
+      // stock 字段不添加针对性策略，使用默认配置
+    ],
+  })
+
+  // 场景3：混合使用全局策略和针对性策略
+  const mixedColumns = Component.transform('proTable', baseColumns, {
+    enums: { statusEnum },
+    // 全局策略：所有列都有 tooltip
+    applyStrategies: [Tooltip({ content: '默认提示' })],
+    // 针对性策略：特定列有特殊配置
+    columnStrategies: [
+      {
+        dataIndex: 'price',
+        strategies: [
+          Width({ table: 150 }),
+          Format({ type: 'money', precision: 2 }),
+          Tooltip({ content: '商品价格（元）' }), // 覆盖全局 tooltip
+        ],
+      },
+      {
+        dataIndex: 'stock',
+        strategies: [Width({ table: 100 }), Tooltip({ content: '当前库存数量' })],
+      },
+    ],
+  })
+
+  // 场景4：根据业务逻辑动态配置针对性策略
+  const isEditMode = false
+  const dynamicColumns = Component.transform('proForm', baseColumns, {
+    enums: { statusEnum },
+    columnStrategies: isEditMode
+      ? [
+          // 编辑模式：所有字段必填
+          { dataIndex: 'productName', strategies: [Required()] },
+          { dataIndex: 'price', strategies: [Required()] },
+          { dataIndex: 'stock', strategies: [Required()] },
+        ]
+      : [
+          // 新建模式：只有部分字段必填
+          { dataIndex: 'productName', strategies: [Required()] },
+          { dataIndex: 'price', strategies: [Required()] },
+        ],
+  })
+
+  return (
+    <>
+      <ProTable columns={tableColumns} dataSource={mockData} />
+      <BetaSchemaForm columns={formFields} />
+      <ProTable columns={mixedColumns} dataSource={mockData} />
+      <BetaSchemaForm columns={dynamicColumns} />
+    </>
+  )
+}
+
 // 模拟数据
 const mockData = [
   {

@@ -677,3 +677,367 @@ describe('多策略组合', () => {
     expect(result.width).toBe(120)
   })
 })
+
+describe('运行时策略应用', () => {
+  it('应该支持运行时添加策略（merge 模式）', () => {
+    // 模拟 Component.transform 的处理流程
+    const column: ProColumnsType.ColumnType = {
+      title: '姓名',
+      dataIndex: 'name',
+      valueType: 'text',
+      strategys: [
+        {
+          mode: 'merge',
+          strategy: [Search()],
+        },
+      ],
+    }
+
+    // 运行时添加策略
+    const runtimeStrategies = [Required(), Placeholder()]
+    const columnWithRuntime = {
+      ...column,
+      strategys: [
+        ...(column.strategys || []),
+        {
+          mode: 'merge' as const,
+          strategy: runtimeStrategies,
+        },
+      ],
+    }
+
+    // 执行策略
+    let result = { ...columnWithRuntime }
+    columnWithRuntime.strategys?.forEach((strategyConfig) => {
+      strategyConfig.strategy.forEach((strategyFn) => {
+        result = { ...result, ...strategyFn(result) }
+      })
+    })
+
+    // 验证：既有原始策略的效果，也有运行时策略的效果
+    expect(result.search).toBe(true) // 原始策略
+    expect(result.formItemProps?.rules?.[0].required).toBe(true) // 运行时策略
+    // 因为有 search: true，Placeholder 会生成 "搜索姓名"
+    expect(result.fieldProps?.placeholder).toBe('搜索姓名') // 运行时策略
+  })
+
+  it('应该支持运行时替换策略（replace 模式）', () => {
+    // 原始 column 有策略
+    const column: ProColumnsType.ColumnType = {
+      title: '姓名',
+      dataIndex: 'name',
+      valueType: 'text',
+      strategys: [
+        {
+          mode: 'merge',
+          strategy: [Search(), Sort()],
+        },
+      ],
+    }
+
+    // 运行时替换策略（mergeMode: false）
+    const runtimeStrategies = [Required(), Placeholder()]
+    const columnWithRuntime = {
+      ...column,
+      strategys: [
+        {
+          mode: 'merge' as const,
+          strategy: runtimeStrategies,
+        },
+      ],
+    }
+
+    // 执行策略
+    let result = { ...columnWithRuntime }
+    columnWithRuntime.strategys?.forEach((strategyConfig) => {
+      strategyConfig.strategy.forEach((strategyFn) => {
+        result = { ...result, ...strategyFn(result) }
+      })
+    })
+
+    // 验证：只有运行时策略的效果，没有原始策略的效果
+    expect(result.search).toBeUndefined() // 原始策略被替换
+    expect(result.sorter).toBeUndefined() // 原始策略被替换
+    expect(result.formItemProps?.rules?.[0].required).toBe(true) // 运行时策略
+    expect(result.fieldProps?.placeholder).toBe('请输入姓名') // 运行时策略
+  })
+
+  it('应该支持运行时策略的场景化配置', () => {
+    const column: ProColumnsType.ColumnType = {
+      title: '金额',
+      dataIndex: 'amount',
+      valueType: 'money',
+    }
+
+    // 运行时添加场景化策略
+    const runtimeStrategies = [
+      Width({
+        table: 150,
+        form: 'lg',
+        description: 200,
+      }),
+    ]
+
+    const columnWithRuntime = {
+      ...column,
+      strategys: [
+        {
+          mode: 'merge' as const,
+          strategy: runtimeStrategies,
+        },
+      ],
+    }
+
+    // 测试 table 场景
+    let resultTable = { ...columnWithRuntime }
+    columnWithRuntime.strategys?.forEach((strategyConfig) => {
+      strategyConfig.strategy.forEach((strategyFn) => {
+        resultTable = { ...resultTable, ...strategyFn(resultTable, 'table') }
+      })
+    })
+    expect(resultTable.width).toBe(150)
+
+    // 测试 form 场景
+    let resultForm = { ...columnWithRuntime }
+    columnWithRuntime.strategys?.forEach((strategyConfig) => {
+      strategyConfig.strategy.forEach((strategyFn) => {
+        resultForm = { ...resultForm, ...strategyFn(resultForm, 'form') }
+      })
+    })
+    expect(resultForm.width).toBe('lg')
+
+    // 测试 description 场景
+    let resultDesc = { ...columnWithRuntime }
+    columnWithRuntime.strategys?.forEach((strategyConfig) => {
+      strategyConfig.strategy.forEach((strategyFn) => {
+        resultDesc = { ...resultDesc, ...strategyFn(resultDesc, 'description') }
+      })
+    })
+    expect(resultDesc.width).toBe(200)
+  })
+
+  it('应该支持空的运行时策略数组', () => {
+    const column: ProColumnsType.ColumnType = {
+      title: '姓名',
+      dataIndex: 'name',
+      valueType: 'text',
+    }
+
+    // 运行时策略为空数组
+    const runtimeStrategies: ProColumnsType.StrategyItem[] = []
+    const columnWithRuntime = {
+      ...column,
+      strategys:
+        runtimeStrategies.length > 0
+          ? [
+              {
+                mode: 'merge' as const,
+                strategy: runtimeStrategies,
+              },
+            ]
+          : undefined,
+    }
+
+    // 验证：没有策略被应用
+    expect(columnWithRuntime.strategys).toBeUndefined()
+  })
+})
+
+describe('针对特定 Column 的运行时策略', () => {
+  it('应该只对指定 dataIndex 的 column 应用策略', () => {
+    const columns: ProColumnsType.ColumnType[] = [
+      { title: '姓名', dataIndex: 'name', valueType: 'text' },
+      { title: '年龄', dataIndex: 'age', valueType: 'digit' },
+      { title: '邮箱', dataIndex: 'email', valueType: 'text' },
+    ]
+
+    // 只对 name 和 email 应用策略
+    const columnsWithTargetStrategies = columns.map((column) => {
+      if (column.dataIndex === 'name') {
+        return {
+          ...column,
+          strategys: [{ mode: 'merge' as const, strategy: [Required(), Placeholder()] }],
+        }
+      } else if (column.dataIndex === 'email') {
+        return {
+          ...column,
+          strategys: [{ mode: 'merge' as const, strategy: [Required()] }],
+        }
+      }
+      return column
+    })
+
+    // 执行策略
+    const results = columnsWithTargetStrategies.map((column) => {
+      if (!column.strategys) return column
+      let result = { ...column }
+      column.strategys.forEach((strategyConfig) => {
+        strategyConfig.strategy.forEach((strategyFn) => {
+          result = { ...result, ...strategyFn(result) }
+        })
+      })
+      return result
+    })
+
+    // 验证：只有 name 和 email 有策略效果
+    expect(results[0].formItemProps?.rules?.[0].required).toBe(true) // name 有 Required
+    expect(results[0].fieldProps?.placeholder).toBe('请输入姓名') // name 有 Placeholder
+    expect(results[1].formItemProps).toBeUndefined() // age 没有策略
+    expect(results[2].formItemProps?.rules?.[0].required).toBe(true) // email 有 Required
+  })
+
+  it('应该支持针对性策略的 merge 模式', () => {
+    const column: ProColumnsType.ColumnType = {
+      title: '姓名',
+      dataIndex: 'name',
+      valueType: 'text',
+      strategys: [{ mode: 'merge', strategy: [Search()] }], // 原始策略
+    }
+
+    // merge 模式：添加针对性策略
+    const columnWithTarget = {
+      ...column,
+      strategys: [
+        ...(column.strategys || []),
+        { mode: 'merge' as const, strategy: [Required(), Placeholder()] }, // 针对性策略
+      ],
+    }
+
+    // 执行策略
+    let result = { ...columnWithTarget }
+    columnWithTarget.strategys?.forEach((strategyConfig) => {
+      strategyConfig.strategy.forEach((strategyFn) => {
+        result = { ...result, ...strategyFn(result) }
+      })
+    })
+
+    // 验证：既有原始策略效果，也有针对性策略效果
+    expect(result.search).toBe(true) // 原始策略
+    expect(result.formItemProps?.rules?.[0].required).toBe(true) // 针对性策略
+    expect(result.fieldProps?.placeholder).toBe('搜索姓名') // 针对性策略
+  })
+
+  it('应该支持针对性策略的 replace 模式', () => {
+    const column: ProColumnsType.ColumnType = {
+      title: '姓名',
+      dataIndex: 'name',
+      valueType: 'text',
+      strategys: [
+        { mode: 'merge', strategy: [Search()] }, // 原始策略
+        { mode: 'merge', strategy: [Sort()] }, // 全局运行时策略
+      ],
+    }
+
+    // replace 模式：用针对性策略替换所有策略
+    const columnWithTarget = {
+      ...column,
+      strategys: [{ mode: 'merge' as const, strategy: [Required(), Placeholder()] }], // 只保留针对性策略
+    }
+
+    // 执行策略
+    let result = { ...columnWithTarget }
+    columnWithTarget.strategys?.forEach((strategyConfig) => {
+      strategyConfig.strategy.forEach((strategyFn) => {
+        result = { ...result, ...strategyFn(result) }
+      })
+    })
+
+    // 验证：只有针对性策略效果，原始策略和全局策略被替换
+    expect(result.search).toBeUndefined() // 原始策略被替换
+    expect(result.sorter).toBeUndefined() // 全局策略被替换
+    expect(result.formItemProps?.rules?.[0].required).toBe(true) // 针对性策略
+    expect(result.fieldProps?.placeholder).toBe('请输入姓名') // 针对性策略
+  })
+
+  it('应该支持针对性策略的场景化配置', () => {
+    const column: ProColumnsType.ColumnType = {
+      title: '金额',
+      dataIndex: 'amount',
+      valueType: 'money',
+    }
+
+    // 针对性策略：场景化宽度配置
+    const columnWithTarget = {
+      ...column,
+      strategys: [
+        {
+          mode: 'merge' as const,
+          strategy: [Width({ table: 180, form: 'xl', description: 220 })],
+        },
+      ],
+    }
+
+    // 测试 table 场景
+    let resultTable = { ...columnWithTarget }
+    columnWithTarget.strategys?.forEach((strategyConfig) => {
+      strategyConfig.strategy.forEach((strategyFn) => {
+        resultTable = { ...resultTable, ...strategyFn(resultTable, 'table') }
+      })
+    })
+    expect(resultTable.width).toBe(180)
+
+    // 测试 form 场景
+    let resultForm = { ...columnWithTarget }
+    columnWithTarget.strategys?.forEach((strategyConfig) => {
+      strategyConfig.strategy.forEach((strategyFn) => {
+        resultForm = { ...resultForm, ...strategyFn(resultForm, 'form') }
+      })
+    })
+    expect(resultForm.width).toBe('xl')
+
+    // 测试 description 场景
+    let resultDesc = { ...columnWithTarget }
+    columnWithTarget.strategys?.forEach((strategyConfig) => {
+      strategyConfig.strategy.forEach((strategyFn) => {
+        resultDesc = { ...resultDesc, ...strategyFn(resultDesc, 'description') }
+      })
+    })
+    expect(resultDesc.width).toBe(220)
+  })
+
+  it('应该支持全局策略和针对性策略的组合使用', () => {
+    const columns: ProColumnsType.ColumnType[] = [
+      { title: '姓名', dataIndex: 'name', valueType: 'text' },
+      { title: '金额', dataIndex: 'amount', valueType: 'money' },
+    ]
+
+    // 模拟全局策略 + 针对性策略
+    const columnsWithStrategies = columns.map((column) => {
+      const processedColumn = { ...column }
+
+      // 1. 应用全局策略（所有 column）
+      processedColumn.strategys = [{ mode: 'merge' as const, strategy: [Width({ table: 120 })] }]
+
+      // 2. 应用针对性策略（只有 amount）
+      if (column.dataIndex === 'amount') {
+        processedColumn.strategys = [
+          ...processedColumn.strategys,
+          { mode: 'merge' as const, strategy: [Format({ type: 'money' }), Tooltip({ content: '金额提示' })] },
+        ]
+      }
+
+      return processedColumn
+    })
+
+    // 执行策略
+    const results = columnsWithStrategies.map((column) => {
+      let result = { ...column }
+      column.strategys?.forEach((strategyConfig) => {
+        strategyConfig.strategy.forEach((strategyFn) => {
+          result = { ...result, ...strategyFn(result, 'table') }
+        })
+      })
+      return result
+    })
+
+    // 验证 name：只有全局策略
+    expect(results[0].width).toBe(120) // 全局策略
+    expect(results[0].render).toBeUndefined() // 没有 Format
+    expect(results[0].tooltip).toBeUndefined() // 没有 Tooltip
+
+    // 验证 amount：全局策略 + 针对性策略
+    expect(results[1].width).toBe(120) // 全局策略
+    expect(results[1].render).toBeDefined() // 针对性策略：Format
+    expect(results[1].tooltip).toBe('金额提示') // 针对性策略：Tooltip
+  })
+})
