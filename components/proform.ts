@@ -12,11 +12,14 @@ export type ProFormField = ProColumnsType.ColumnType & {
 
 const ProFormAdapter: ComponentAdapter<ProFormField> = {
   name: 'proForm',
+  scene: 'form',
   transform: (columns: ProColumnsType.ColumnType[]): ProFormField[] => {
     return columns
       .filter((column) => !(column as any).hideInForm)
       .map((column) => {
         const formField: any = { ...column }
+
+        // 删除表格专用属性
         delete formField.hideInTable
         delete formField.ellipsis
         delete formField.copyable
@@ -28,6 +31,7 @@ const ProFormAdapter: ComponentAdapter<ProFormField> = {
           formField.name = formField.dataIndex
         }
 
+        // 根据 valueType 设置合适的表单宽度（如果策略没有设置）
         if (!formField.width) {
           const valueType = (formField.valueType as string) || 'text'
           if (['textarea'].includes(valueType)) {

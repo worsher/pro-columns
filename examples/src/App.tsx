@@ -6,11 +6,13 @@ import {
   FormOutlined,
   ProfileOutlined,
   AppstoreOutlined,
+  ExperimentOutlined,
 } from '@ant-design/icons'
 import ProTableDemo from './pages/ProTableDemo'
 import ProFormDemo from './pages/ProFormDemo'
 import ProDescriptionDemo from './pages/ProDescriptionDemo'
 import ComprehensiveDemo from './pages/ComprehensiveDemo'
+import NewStrategiesDemo from './pages/NewStrategiesDemo'
 
 const { Header, Content, Sider } = Layout
 
@@ -37,6 +39,11 @@ const items: MenuItem[] = [
     icon: <AppstoreOutlined />,
     label: '综合示例',
   },
+  {
+    key: 'newstrategies',
+    icon: <ExperimentOutlined />,
+    label: '新策略示例',
+  },
 ]
 
 function App() {
@@ -52,6 +59,8 @@ function App() {
         return <ProDescriptionDemo />
       case 'comprehensive':
         return <ComprehensiveDemo />
+      case 'newstrategies':
+        return <NewStrategiesDemo />
       default:
         return <ProTableDemo />
     }

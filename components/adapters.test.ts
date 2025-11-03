@@ -156,6 +156,40 @@ describe('ProForm 适配器', () => {
     expect(textareaResult[0].width).toBe('xl')
     expect(dateRangeResult[0].width).toBe('lg')
   })
+
+  it('应该保留字符串类型的 width', () => {
+    const columns: ProColumnsType.ColumnType[] = [
+      {
+        title: '姓名',
+        dataIndex: 'name',
+        valueType: 'text',
+        width: 'xl' as any, // 明确指定的字符串宽度
+      },
+    ]
+
+    const result = ProFormAdapter.transform(columns)
+
+    // 字符串宽度应该被保留
+    expect(result[0].width).toBe('xl')
+  })
+
+  it('数字类型的 width 会被保留（场景化配置由 Width 策略处理）', () => {
+    const columns: ProColumnsType.ColumnType[] = [
+      {
+        title: '姓名',
+        dataIndex: 'name',
+        valueType: 'text',
+        width: 120, // 如果有数字宽度，adapter 会保留它
+      },
+    ]
+
+    const result = ProFormAdapter.transform(columns)
+
+    // 注意：数字宽度现在会被保留，因为场景化配置在策略层处理
+    // Width 策略应该根据 scene='form' 设置字符串宽度，而不是数字宽度
+    // 如果出现数字宽度，说明策略配置不正确
+    expect(result[0].width).toBe(120)
+  })
 })
 
 describe('ProDescription 适配器', () => {

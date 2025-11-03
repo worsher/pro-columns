@@ -4,17 +4,18 @@ import { ProColumnsType } from '../type'
 export type ColumnsProps = {
   columns: ProColumnsType.ColumnType[]
   enums?: Record<string, any>
+  scene?: ProColumnsType.Scene // 可选场景参数
 }
 
 /**
  * Columns 处理器
  * 功能：
  * 1. 处理 enums 映射：将字段中的 enumKey 转换为实际的 valueEnum
- * 2. 应用策略处理：通过 Strategy 处理器应用所有配置的策略
+ * 2. 应用策略处理：通过 Strategy 处理器应用所有配置的策略（支持场景）
  * 3. 返回处理后的 columns
  */
 const Columns = (props: ColumnsProps): ProColumnsType.ColumnType[] => {
-  const { columns, enums = {} } = props
+  const { columns, enums = {}, scene } = props
 
   // 1. 处理 enums 映射
   const columnsWithEnums = columns.map((column) => {
@@ -33,8 +34,8 @@ const Columns = (props: ColumnsProps): ProColumnsType.ColumnType[] => {
     return processedColumn
   })
 
-  // 2. 应用策略处理
-  const processedColumns = Strategy(columnsWithEnums)
+  // 2. 应用策略处理（传入场景参数）
+  const processedColumns = Strategy(columnsWithEnums, scene)
 
   return processedColumns
 }

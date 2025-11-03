@@ -127,14 +127,14 @@ export function generatePlaceholder(
 
 /**
  * 工具函数：创建策略函数
- * @param fn 策略处理函数
+ * @param fn 策略处理函数（支持场景参数）
  * @returns 策略函数
  */
 export function createStrategy(
-  fn: (column: ProColumnsType.ColumnType) => Partial<ProColumnsType.ColumnType>
+  fn: (column: ProColumnsType.ColumnType, scene?: ProColumnsType.Scene) => Partial<ProColumnsType.ColumnType>
 ): ProColumnsType.StrategyItem {
-  return (column: ProColumnsType.ColumnType) => {
-    const updates = fn(column)
+  return (column: ProColumnsType.ColumnType, scene?: ProColumnsType.Scene) => {
+    const updates = fn(column, scene)
     return deepMerge(column, updates)
   }
 }

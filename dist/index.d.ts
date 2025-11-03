@@ -4,7 +4,7 @@ import { ProColumnsType } from '../type';
  * Columns 处理器
  * 功能：
  * 1. 处理 enums 映射：将字段中的 enumKey 转换为实际的 valueEnum
- * 2. 应用策略处理：通过 Strategy 处理器应用所有配置的策略
+ * 2. 应用策略处理：通过 Strategy 处理器应用所有配置的策略（支持场景）
  * 3. 返回处理后的 columns
  */
 export declare const Columns: (props: ColumnsProps) => ProColumnsType.ColumnType[];
@@ -12,6 +12,7 @@ export declare const Columns: (props: ColumnsProps) => ProColumnsType.ColumnType
 declare type ColumnsProps = {
     columns: ProColumnsType.ColumnType[];
     enums?: Record<string, any>;
+    scene?: ProColumnsType.Scene;
 };
 
 /**
@@ -32,8 +33,10 @@ export declare const Component: {
      * 转换 columns 为指定组件的格式
      * @param name 组件名称
      * @param columns 原始 columns
+     * @param enums 枚举字典（可选）
+     * @param scene 场景（可选，如不提供则自动推断）
      */
-    transform<T = any>(name: string, columns: ProColumnsType.ColumnType[]): T[];
+    transform<T = any>(name: string, columns: ProColumnsType.ColumnType[], enums?: Record<string, any>, scene?: ProColumnsType.Scene): T[];
     /**
      * 获取所有已注册的适配器名称
      */
@@ -53,6 +56,10 @@ declare type ComponentAdapter<T = any> = {
      * 组件名称
      */
     name: string;
+    /**
+     * 对应的场景（用于自动推断）
+     */
+    scene?: ProColumnsType.Scene;
     /**
      * 转换函数：将通用 columns 转换为组件特定的 columns
      */

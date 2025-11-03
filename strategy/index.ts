@@ -31,15 +31,31 @@ const merge = (ori: ProColumnsType.ColumnType, cur: ProColumnsType.Strategy): Pr
 }
 
 // 策略执行
-const execute = (column: ProColumnsType.ColumnType, strategys: ProColumnsType.Strategy[]): ProColumnsType.ColumnType => {
+const execute = (
+    column: ProColumnsType.ColumnType,
+    strategys: ProColumnsType.Strategy[],
+    scene?: ProColumnsType.Scene
+): ProColumnsType.ColumnType => {
     let result = { ...column }
 
     // 遍历所有策略配置
     strategys.forEach(strategyConfig => {
+        // 检查策略是否适用于当前场景
+        if (strategyConfig.scene) {
+            const allowedScenes = Array.isArray(strategyConfig.scene)
+                ? strategyConfig.scene
+                : [strategyConfig.scene]
+
+            // 如果指定了场景，但当前场景不在列表中，则跳过
+            if (scene && !allowedScenes.includes(scene)) {
+                return
+            }
+        }
+
         // 执行该策略配置中的所有策略函数
         strategyConfig.strategy.forEach(strategyFn => {
-            // 每个策略函数接收当前 column，返回处理后的 column
-            const processed = strategyFn(result)
+            // 每个策略函数接收当前 column 和场景，返回处理后的 column
+            const processed = strategyFn(result, scene)
             // 合并处理结果
             result = { ...result, ...processed }
         })
@@ -52,7 +68,10 @@ const execute = (column: ProColumnsType.ColumnType, strategys: ProColumnsType.St
 }
 
 // 策略类
-const Strategy = (columns: ProColumnsType.ColumnType[]): ProColumnsType.ColumnType[] => {
+const Strategy = (
+    columns: ProColumnsType.ColumnType[],
+    scene?: ProColumnsType.Scene
+): ProColumnsType.ColumnType[] => {
     // 复制一份数据
     const copyColumns = columns.map(column => ({ ...column }))
     return copyColumns.map(column => {
@@ -60,7 +79,7 @@ const Strategy = (columns: ProColumnsType.ColumnType[]): ProColumnsType.ColumnTy
             column.strategys = column.strategys.map(strategy => {
                 return merge(column, strategy)
             })
-            return execute(column, column.strategys)
+            return execute(column, column.strategys, scene)
         }
         return column
     })
@@ -73,6 +92,10 @@ export { default as Search } from './Search'
 export { default as Sort } from './Sort'
 export { default as Required } from './Required'
 export { default as Placeholder } from './Placeholder'
+export { default as Format } from './Format'
+export { default as Tooltip } from './Tooltip'
+export { default as DefaultValue } from './DefaultValue'
+export { default as Width } from './Width'
 
 // 导出策略工具函数
 export * from './utils'

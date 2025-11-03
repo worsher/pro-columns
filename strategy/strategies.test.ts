@@ -3,6 +3,10 @@ import Search from './Search'
 import Sort from './Sort'
 import Required from './Required'
 import Placeholder from './Placeholder'
+import Format from './Format'
+import Tooltip from './Tooltip'
+import DefaultValue from './DefaultValue'
+import Width from './Width'
 import { ProColumnsType } from '../type'
 
 describe('Search 策略', () => {
@@ -290,5 +294,386 @@ describe('策略组合测试', () => {
 
     expect(result.formItemProps?.rules?.[0].required).toBe(true)
     expect(result.fieldProps?.placeholder).toBe('请输入姓名')
+  })
+})
+
+describe('Format 策略', () => {
+  it('应该为 money 类型添加格式化', () => {
+    const column: ProColumnsType.ColumnType = {
+      title: '金额',
+      dataIndex: 'amount',
+      valueType: 'money',
+    }
+
+    const strategy = Format({ type: 'money', precision: 2, symbol: '¥' })
+    const result = strategy(column)
+
+    expect(result.render).toBeDefined()
+    if (result.render) {
+      expect(result.render(1234.5, {})).toBe('¥1,234.50')
+      expect(result.render(0, {})).toBe('¥0.00')
+    }
+  })
+
+  it('应该为 digit 类型添加数字格式化', () => {
+    const column: ProColumnsType.ColumnType = {
+      title: '数量',
+      dataIndex: 'count',
+      valueType: 'digit',
+    }
+
+    const strategy = Format({ type: 'number', precision: 0, useGrouping: true })
+    const result = strategy(column)
+
+    expect(result.render).toBeDefined()
+    if (result.render) {
+      expect(result.render(123456, {})).toBe('123,456')
+    }
+  })
+
+  it('应该为 percent 类型添加百分比格式化', () => {
+    const column: ProColumnsType.ColumnType = {
+      title: '比率',
+      dataIndex: 'rate',
+      valueType: 'percent',
+    }
+
+    const strategy = Format({ type: 'percent', precision: 1 })
+    const result = strategy(column)
+
+    expect(result.render).toBeDefined()
+    if (result.render) {
+      expect(result.render(85.5, {})).toBe('85.5%')
+    }
+  })
+
+  it('应该为 date 类型添加日期格式化', () => {
+    const column: ProColumnsType.ColumnType = {
+      title: '日期',
+      dataIndex: 'date',
+      valueType: 'date',
+    }
+
+    const strategy = Format({ type: 'date', dateFormat: 'YYYY-MM-DD' })
+    const result = strategy(column)
+
+    expect(result.render).toBeDefined()
+    if (result.render) {
+      const formatted = result.render('2024-01-15', {})
+      expect(formatted).toBe('2024-01-15')
+    }
+  })
+
+  it('应该支持自定义格式化函数', () => {
+    const column: ProColumnsType.ColumnType = {
+      title: '状态',
+      dataIndex: 'status',
+      valueType: 'text',
+    }
+
+    const strategy = Format({
+      formatter: (value) => (value === 'active' ? '激活' : '未激活'),
+    })
+    const result = strategy(column)
+
+    expect(result.render).toBeDefined()
+    if (result.render) {
+      expect(result.render('active', {})).toBe('激活')
+      expect(result.render('inactive', {})).toBe('未激活')
+    }
+  })
+
+  it('应该在 enable=false 时不添加格式化', () => {
+    const column: ProColumnsType.ColumnType = {
+      title: '金额',
+      dataIndex: 'amount',
+      valueType: 'money',
+    }
+
+    const strategy = Format({ enable: false })
+    const result = strategy(column)
+
+    expect(result.render).toBeUndefined()
+  })
+
+  it('应该保留已有的 render 函数', () => {
+    const existingRender = () => '自定义渲染'
+    const column: ProColumnsType.ColumnType = {
+      title: '金额',
+      dataIndex: 'amount',
+      valueType: 'money',
+      render: existingRender,
+    }
+
+    const strategy = Format({ type: 'money' })
+    const result = strategy(column)
+
+    expect(result.render).toBe(existingRender)
+  })
+})
+
+describe('Tooltip 策略', () => {
+  it('应该为列添加 tooltip', () => {
+    const column: ProColumnsType.ColumnType = {
+      title: '姓名',
+      dataIndex: 'name',
+      valueType: 'text',
+    }
+
+    const strategy = Tooltip({ content: '请输入用户的真实姓名' })
+    const result = strategy(column)
+
+    expect(result.tooltip).toBe('请输入用户的真实姓名')
+  })
+
+  it('应该为表单添加 tooltip', () => {
+    const column: ProColumnsType.ColumnType = {
+      title: '密码',
+      dataIndex: 'password',
+      valueType: 'password',
+    }
+
+    const strategy = Tooltip({
+      content: '密码长度至少8位',
+      formType: 'tooltip',
+    })
+    const result = strategy(column)
+
+    expect(result.formItemProps?.tooltip).toBe('密码长度至少8位')
+  })
+
+  it('应该为表单添加 extra', () => {
+    const column: ProColumnsType.ColumnType = {
+      title: '邮箱',
+      dataIndex: 'email',
+      valueType: 'text',
+    }
+
+    const strategy = Tooltip({
+      content: '用于接收通知邮件',
+      formType: 'extra',
+    })
+    const result = strategy(column)
+
+    expect(result.formItemProps?.extra).toBe('用于接收通知邮件')
+  })
+
+  it('应该支持函数形式的 content', () => {
+    const column: ProColumnsType.ColumnType = {
+      title: '年龄',
+      dataIndex: 'age',
+      valueType: 'digit',
+    }
+
+    const strategy = Tooltip({
+      content: (col) => `请输入${col.title}，范围1-150`,
+    })
+    const result = strategy(column)
+
+    expect(result.tooltip).toBe('请输入年龄，范围1-150')
+  })
+
+  it('应该在 showInTable=false 时不添加表格 tooltip', () => {
+    const column: ProColumnsType.ColumnType = {
+      title: '姓名',
+      dataIndex: 'name',
+      valueType: 'text',
+    }
+
+    const strategy = Tooltip({
+      content: '提示信息',
+      showInTable: false,
+    })
+    const result = strategy(column)
+
+    expect(result.tooltip).toBeUndefined()
+  })
+})
+
+describe('DefaultValue 策略', () => {
+  it('应该设置静态默认值', () => {
+    const column: ProColumnsType.ColumnType = {
+      title: '状态',
+      dataIndex: 'status',
+      valueType: 'select',
+    }
+
+    const strategy = DefaultValue({ value: 'active' })
+    const result = strategy(column)
+
+    expect(result.initialValue).toBe('active')
+  })
+
+  it('应该支持函数形式的默认值', () => {
+    const column: ProColumnsType.ColumnType = {
+      title: '创建时间',
+      dataIndex: 'createTime',
+      valueType: 'dateTime',
+    }
+
+    const now = new Date('2024-01-15')
+    const strategy = DefaultValue({ value: () => now })
+    const result = strategy(column)
+
+    expect(result.initialValue).toEqual(now)
+  })
+
+  it('应该根据类型自动推断默认值 - digit', () => {
+    const column: ProColumnsType.ColumnType = {
+      title: '数量',
+      dataIndex: 'count',
+      valueType: 'digit',
+    }
+
+    const strategy = DefaultValue({ autoInfer: true })
+    const result = strategy(column)
+
+    expect(result.initialValue).toBe(0)
+  })
+
+  it('应该根据类型自动推断默认值 - text', () => {
+    const column: ProColumnsType.ColumnType = {
+      title: '备注',
+      dataIndex: 'remark',
+      valueType: 'text',
+    }
+
+    const strategy = DefaultValue({ autoInfer: true })
+    const result = strategy(column)
+
+    expect(result.initialValue).toBe('')
+  })
+
+  it('应该根据类型自动推断默认值 - switch', () => {
+    const column: ProColumnsType.ColumnType = {
+      title: '启用',
+      dataIndex: 'enabled',
+      valueType: 'switch',
+    }
+
+    const strategy = DefaultValue({ autoInfer: true })
+    const result = strategy(column)
+
+    expect(result.initialValue).toBe(false)
+  })
+
+  it('应该保留已有的 initialValue', () => {
+    const column: ProColumnsType.ColumnType = {
+      title: '状态',
+      dataIndex: 'status',
+      valueType: 'select',
+      initialValue: 'pending',
+    }
+
+    const strategy = DefaultValue({ value: 'active' })
+    const result = strategy(column)
+
+    expect(result.initialValue).toBe('pending')
+  })
+})
+
+describe('Width 策略', () => {
+  it('应该设置固定宽度', () => {
+    const column: ProColumnsType.ColumnType = {
+      title: 'ID',
+      dataIndex: 'id',
+      valueType: 'digit',
+    }
+
+    const strategy = Width({ value: 80 })
+    const result = strategy(column)
+
+    expect(result.width).toBe(80)
+  })
+
+  it('应该根据类型自动推断宽度', () => {
+    const column: ProColumnsType.ColumnType = {
+      title: '创建时间',
+      dataIndex: 'createTime',
+      valueType: 'dateTime',
+    }
+
+    const strategy = Width({ auto: true })
+    const result = strategy(column)
+
+    expect(result.width).toBe(180)
+  })
+
+  it('应该根据标题长度计算宽度', () => {
+    const column: ProColumnsType.ColumnType = {
+      title: '这是一个很长的标题',
+      dataIndex: 'field',
+      valueType: 'text',
+    }
+
+    const strategy = Width({ auto: true })
+    const result = strategy(column)
+
+    expect(result.width).toBeGreaterThan(100)
+  })
+
+  it('应该应用最小宽度限制', () => {
+    const column: ProColumnsType.ColumnType = {
+      title: 'ID',
+      dataIndex: 'id',
+      valueType: 'digit',
+    }
+
+    const strategy = Width({ value: 50, min: 80 })
+    const result = strategy(column)
+
+    expect(result.width).toBe(80)
+  })
+
+  it('应该应用最大宽度限制', () => {
+    const column: ProColumnsType.ColumnType = {
+      title: '这是一个超级超级超级长的标题',
+      dataIndex: 'field',
+      valueType: 'text',
+    }
+
+    const strategy = Width({ auto: true, max: 200 })
+    const result = strategy(column)
+
+    expect(result.width).toBeLessThanOrEqual(200)
+  })
+
+  it('应该保留已有的 width', () => {
+    const column: ProColumnsType.ColumnType = {
+      title: 'ID',
+      dataIndex: 'id',
+      valueType: 'digit',
+      width: 100,
+    }
+
+    const strategy = Width({ value: 80 })
+    const result = strategy(column)
+
+    expect(result.width).toBe(100)
+  })
+})
+
+describe('多策略组合', () => {
+  it('应该支持新旧策略组合使用', () => {
+    const column: ProColumnsType.ColumnType = {
+      title: '金额',
+      dataIndex: 'amount',
+      valueType: 'money',
+    }
+
+    let result = column
+    result = Search()(result)
+    result = Required()(result)
+    result = Format({ type: 'money', precision: 2 })(result)
+    result = Tooltip({ content: '请输入订单金额' })(result)
+    result = DefaultValue({ value: 0 })(result)
+    result = Width({ value: 120 })(result)
+
+    expect(result.search).toBe(true)
+    expect(result.formItemProps?.rules?.[0].required).toBe(true)
+    expect(result.render).toBeDefined()
+    expect(result.tooltip).toBe('请输入订单金额')
+    expect(result.initialValue).toBe(0)
+    expect(result.width).toBe(120)
   })
 })

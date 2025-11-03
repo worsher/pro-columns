@@ -1,15 +1,23 @@
 import type { ProColumns } from "@ant-design/pro-components"
 
 declare namespace ProColumnsType{
+    // 场景类型
+    type Scene = "table" | "form" | "description"
+
     // 策略模式
     type StrategyMode = "merge" | "replace"
-    // 策略函数
-    type StrategyItem = (column: ColumnType) => ProColumns
+
+    // 策略函数 - 支持场景参数
+    type StrategyItem = (column: ColumnType, scene?: Scene) => ProColumns
+
     // 策略
     type Strategy = {
         mode: StrategyMode,
-        strategy: StrategyItem[]
+        strategy: StrategyItem[],
+        // 可选：指定策略适用的场景
+        scene?: Scene | Scene[]
     }
+
     // 列配置
     interface ColumnType extends ProColumns {
         strategys?: Strategy[]
