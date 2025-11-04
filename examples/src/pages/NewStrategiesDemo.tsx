@@ -1,7 +1,6 @@
 import { useState } from 'react'
-import { ProTable, BetaSchemaForm } from '@ant-design/pro-components'
-import { Columns, Component } from 'pro-columns'
-import { ProTableAdapter, ProFormAdapter } from 'pro-columns/components'
+import { Modal } from 'antd'
+import { ProColumnsTable, ProColumnsForm } from 'pro-columns'
 import {
   Format,
   Tooltip,
@@ -13,7 +12,7 @@ import {
   Placeholder,
 } from 'pro-columns/strategy'
 import { ProColumnsType } from 'pro-columns/type'
-import { Typography, Space, Button, Modal, message, Card } from 'antd'
+import { Typography, Space, Button, message, Card } from 'antd'
 
 const { Title, Paragraph, Text } = Typography
 
@@ -62,10 +61,6 @@ const statusEnum = {
 
 const NewStrategiesDemo = () => {
   const [modalVisible, setModalVisible] = useState(false)
-
-  // 注册适配器
-  Component.register(ProTableAdapter)
-  Component.register(ProFormAdapter)
 
   // 定义 columns 配置，使用新策略
   const columns: ProColumnsType.ColumnType[] = [
@@ -236,16 +231,6 @@ const NewStrategiesDemo = () => {
     },
   ]
 
-  // 使用 Columns 处理器处理 columns
-  const processedColumns = Columns({
-    columns,
-    enums: { statusEnum },
-  })
-
-  // 使用适配器转换
-  const tableColumns = Component.transform('proTable', processedColumns)
-  const formFields = Component.transform('proForm', processedColumns)
-
   const handleSubmit = async (values: any) => {
     console.log('提交的订单数据：', values)
     message.success('创建订单成功！')
@@ -256,7 +241,7 @@ const NewStrategiesDemo = () => {
   return (
     <Space direction="vertical" size="large" style={{ width: '100%' }}>
       <div>
-        <Title level={2}>新策略示例</Title>
+        <Title level={2}>新策略示例（使用 ProColumns 组件）</Title>
         <Paragraph>
           展示四个新增策略的使用效果：
         </Paragraph>
@@ -278,8 +263,9 @@ const NewStrategiesDemo = () => {
       </div>
 
       <Card>
-        <ProTable
-          columns={tableColumns}
+        <ProColumnsTable
+          columns={columns}
+          enums={{ statusEnum }}
           dataSource={mockOrders}
           rowKey="id"
           search={{
@@ -311,9 +297,10 @@ const NewStrategiesDemo = () => {
         width={800}
         destroyOnClose
       >
-        <BetaSchemaForm
+        <ProColumnsForm
           layoutType="Form"
-          columns={formFields as any}
+          columns={columns}
+          enums={{ statusEnum }}
           onFinish={handleSubmit}
           submitter={{
             searchConfig: {

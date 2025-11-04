@@ -1,9 +1,9 @@
-// ��@	��Mh
-export { default as ProTableAdapter } from './protable'
-export { default as ProFormAdapter } from './proform'
-export { default as ProDescriptionAdapter } from './proDescription'
+// 导出所有封装组件
+export { default as ProColumnsTable } from './ProColumnsTable'
+export { default as ProColumnsForm } from './ProColumnsForm'
+export { default as ProColumnsDescription } from './ProColumnsDescription'
 
-// ��{�
-export type { ProTableColumn } from './protable'
-export type { ProFormField } from './proform'
-export type { ProDescriptionColumn } from './proDescription'
+// 导出组件类型
+export type { ProColumnsTableProps } from './ProColumnsTable'
+export type { ProColumnsFormProps } from './ProColumnsForm'
+export type { ProColumnsDescriptionProps } from './ProColumnsDescription'

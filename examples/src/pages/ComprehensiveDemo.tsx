@@ -1,7 +1,6 @@
 import { useState } from 'react'
-import { ProTable, ProDescriptions, ModalForm, BetaSchemaForm } from '@ant-design/pro-components'
-import { Columns, Component } from 'pro-columns'
-import { ProTableAdapter, ProFormAdapter, ProDescriptionAdapter } from 'pro-columns/components'
+import { ModalForm } from '@ant-design/pro-components'
+import { ProColumnsTable, ProColumnsForm, ProColumnsDescription } from 'pro-columns'
 import { Search, Sort, Required, Placeholder } from 'pro-columns/strategy'
 import { ProColumnsType } from 'pro-columns/type'
 import { Typography, Space, Button, Drawer, Tag, message } from 'antd'
@@ -59,11 +58,6 @@ const mockData = [
 const ComprehensiveDemo = () => {
   const [selectedUser, setSelectedUser] = useState<any>(null)
   const [drawerVisible, setDrawerVisible] = useState(false)
-
-  // 注册所有适配器
-  Component.register(ProTableAdapter)
-  Component.register(ProFormAdapter)
-  Component.register(ProDescriptionAdapter)
 
   // 定义统一的 columns 配置
   const columns: ProColumnsType.ColumnType[] = [
@@ -214,17 +208,6 @@ const ComprehensiveDemo = () => {
     },
   ]
 
-  // 使用 Columns 处理器处理 columns
-  const processedColumns = Columns({
-    columns,
-    enums: { statusEnum, roleEnum },
-  })
-
-  // 使用适配器转换为不同组件的格式
-  const tableColumns = Component.transform('proTable', processedColumns)
-  const formFields = Component.transform('proForm', processedColumns)
-  const descColumns = Component.transform('proDescription', processedColumns)
-
   const handleSubmit = async (values: any) => {
     console.log('新增用户：', values)
     message.success('新增成功！')
@@ -234,19 +217,21 @@ const ComprehensiveDemo = () => {
   return (
     <Space direction="vertical" size="large" style={{ width: '100%' }}>
       <div>
-        <Title level={2}>综合示例</Title>
+        <Title level={2}>综合示例（使用 ProColumns 组件）</Title>
         <Paragraph>
           展示如何在一个页面中复用 columns 配置，包括：
         </Paragraph>
         <ul>
-          <li>使用同一份 columns 配置，通过不同的适配器转换为表格、表单、描述列表</li>
+          <li>使用同一份 columns 配置，自动适配为表格、表单、描述列表</li>
           <li>统一应用策略，减少重复配置</li>
           <li>实现完整的 CRUD 场景（查询、新增、查看详情）</li>
+          <li><strong>更简洁的代码</strong>：无需手动处理 columns 和适配器</li>
         </ul>
       </div>
 
-      <ProTable
-        columns={tableColumns}
+      <ProColumnsTable
+        columns={columns}
+        enums={{ statusEnum, roleEnum }}
         dataSource={mockData}
         rowKey="id"
         search={{
@@ -271,9 +256,10 @@ const ComprehensiveDemo = () => {
               destroyOnClose: true,
             }}
           >
-            <BetaSchemaForm
+            <ProColumnsForm
               layoutType="Form"
-              columns={formFields as any}
+              columns={columns}
+              enums={{ statusEnum, roleEnum }}
               submitter={false}
             />
           </ModalForm>,
@@ -293,10 +279,11 @@ const ComprehensiveDemo = () => {
         onClose={() => setDrawerVisible(false)}
       >
         {selectedUser && (
-          <ProDescriptions
+          <ProColumnsDescription
             column={1}
             dataSource={selectedUser}
-            columns={descColumns as any}
+            columns={columns}
+            enums={{ statusEnum, roleEnum }}
           />
         )}
       </Drawer>

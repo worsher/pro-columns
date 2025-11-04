@@ -1,6 +1,4 @@
-import { ProDescriptions } from '@ant-design/pro-components'
-import { Columns, Component } from 'pro-columns'
-import { ProDescriptionAdapter } from 'pro-columns/components'
+import { ProColumnsDescription } from 'pro-columns'
 import { ProColumnsType } from 'pro-columns/type'
 import { Typography, Space, Tag, Card } from 'antd'
 
@@ -35,9 +33,6 @@ const userData = {
 }
 
 const ProDescriptionDemo = () => {
-  // 注册 ProDescription 适配器
-  Component.register(ProDescriptionAdapter)
-
   // 定义 columns 配置
   const columns: ProColumnsType.ColumnType[] = [
     {
@@ -116,43 +111,37 @@ const ProDescriptionDemo = () => {
     },
   ]
 
-  // 使用 Columns 处理器处理 columns
-  const processedColumns = Columns({
-    columns,
-    enums: { statusEnum, roleEnum },
-  })
-
-  // 使用 Component 适配器转换为 ProDescription 字段
-  const descColumns = Component.transform('proDescription', processedColumns)
-
   return (
     <Space direction="vertical" size="large" style={{ width: '100%' }}>
       <div>
-        <Title level={2}>ProDescription 示例</Title>
+        <Title level={2}>ProDescription 示例（使用 ProColumnsDescription 组件）</Title>
         <Paragraph>
-          展示如何使用 pro-columns 配合 ProDescriptions，包括：
+          展示如何使用 ProColumnsDescription 组件，包括：
         </Paragraph>
         <ul>
-          <li>使用 ProDescriptionAdapter 将 columns 转换为描述列表字段</li>
+          <li>自动应用 ProDescription 适配器，转换为描述列表字段</li>
           <li>自动根据字段类型设置 span（长文本字段占据更多列）</li>
           <li>支持复制功能（邮箱、手机号）</li>
           <li>自定义渲染（状态、角色标签）</li>
+          <li><strong>更简洁的使用方式</strong>：无需手动注册适配器或调用 transform</li>
         </ul>
       </div>
 
-      <Card title="用户详情">
-        <ProDescriptions
+      <Card title="用户详情（三列布局）">
+        <ProColumnsDescription
           column={3}
           dataSource={userData}
-          columns={descColumns as any}
+          columns={columns}
+          enums={{ statusEnum, roleEnum }}
         />
       </Card>
 
       <Card title="两列布局">
-        <ProDescriptions
+        <ProColumnsDescription
           column={2}
           dataSource={userData}
-          columns={descColumns as any}
+          columns={columns}
+          enums={{ statusEnum, roleEnum }}
         />
       </Card>
     </Space>

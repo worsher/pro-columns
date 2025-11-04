@@ -1,5 +1,4 @@
-import { ProTable } from '@ant-design/pro-components'
-import { Columns } from 'pro-columns'
+import { ProColumnsTable } from 'pro-columns'
 import { Search, Sort, Placeholder } from 'pro-columns/strategy'
 import { ProColumnsType } from 'pro-columns/type'
 import { Typography, Space, Tag } from 'antd'
@@ -123,28 +122,25 @@ const ProTableDemo = () => {
     },
   ]
 
-  // 使用 Columns 处理器处理 columns
-  const processedColumns = Columns({
-    columns,
-    enums: { statusEnum },
-  })
-
   return (
     <Space direction="vertical" size="large" style={{ width: '100%' }}>
       <div>
-        <Title level={2}>ProTable 示例</Title>
+        <Title level={2}>ProTable 示例（使用 ProColumnsTable 组件）</Title>
         <Paragraph>
-          展示如何使用 pro-columns 配合 ProTable，包括：
+          展示如何使用 ProColumnsTable 组件，包括：
         </Paragraph>
         <ul>
           <li>使用策略系统添加搜索、排序、占位符等功能</li>
           <li>使用 enumKey 简化枚举值映射</li>
           <li>自动生成搜索表单和排序功能</li>
+          <li>自动应用 ProTable 适配器（默认 ellipsis、搜索配置等）</li>
+          <li><strong>更简洁的使用方式</strong>：无需手动调用 Columns 或 Component.transform</li>
         </ul>
       </div>
 
-      <ProTable
-        columns={processedColumns}
+      <ProColumnsTable
+        columns={columns}
+        enums={{ statusEnum }}
         dataSource={mockData}
         rowKey="id"
         search={{

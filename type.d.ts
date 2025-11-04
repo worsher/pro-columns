@@ -21,5 +21,12 @@ declare namespace ProColumnsType{
     // 列配置
     interface ColumnType extends ProColumns {
         strategys?: Strategy[]
+        // 枚举键名，用于从 enums 对象中获取枚举值
+        enumKey?: string
+        // ProDescription 特有属性
+        span?: number
+        hideInDescriptions?: boolean
+        // ProForm 特有属性
+        hideInForm?: boolean
     }
 }

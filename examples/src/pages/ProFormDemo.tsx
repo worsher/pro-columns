@@ -1,6 +1,4 @@
-import { ProForm, BetaSchemaForm } from '@ant-design/pro-components'
-import { Columns, Component } from 'pro-columns'
-import { ProFormAdapter } from 'pro-columns/components'
+import { ProColumnsForm } from 'pro-columns'
 import { Required, Placeholder } from 'pro-columns/strategy'
 import { ProColumnsType } from 'pro-columns/type'
 import { Typography, Space, message } from 'antd'
@@ -21,9 +19,6 @@ const roleEnum = {
 }
 
 const ProFormDemo = () => {
-  // 注册 ProForm 适配器
-  Component.register(ProFormAdapter)
-
   // 定义 columns 配置
   const columns: ProColumnsType.ColumnType[] = [
     {
@@ -154,15 +149,6 @@ const ProFormDemo = () => {
     },
   ]
 
-  // 使用 Columns 处理器处理 columns
-  const processedColumns = Columns({
-    columns,
-    enums: { statusEnum, roleEnum },
-  })
-
-  // 使用 Component 适配器转换为 ProForm 字段
-  const formFields = Component.transform('proForm', processedColumns)
-
   const handleSubmit = async (values: any) => {
     console.log('提交的数据：', values)
     message.success('提交成功！')
@@ -172,21 +158,23 @@ const ProFormDemo = () => {
   return (
     <Space direction="vertical" size="large" style={{ width: '100%' }}>
       <div>
-        <Title level={2}>ProForm 示例</Title>
+        <Title level={2}>ProForm 示例（使用 ProColumnsForm 组件）</Title>
         <Paragraph>
-          展示如何使用 pro-columns 配合 ProForm，包括：
+          展示如何使用 ProColumnsForm 组件，包括：
         </Paragraph>
         <ul>
           <li>使用策略系统添加必填验证、占位符等功能</li>
-          <li>使用 ProFormAdapter 将 columns 转换为表单字段</li>
+          <li>自动应用 ProForm 适配器，转换为表单字段</li>
           <li>自动生成表单验证规则</li>
           <li>支持自定义验证规则（邮箱、手机号）</li>
+          <li><strong>更简洁的使用方式</strong>：无需手动注册适配器或调用 transform</li>
         </ul>
       </div>
 
-      <BetaSchemaForm
+      <ProColumnsForm
         layoutType="Form"
-        columns={formFields as any}
+        columns={columns}
+        enums={{ statusEnum, roleEnum }}
         onFinish={handleSubmit}
         submitter={{
           searchConfig: {
