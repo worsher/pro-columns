@@ -1,0 +1,46 @@
+# 源码目录
+/lib
+/strategy
+/adapter
+/components
+/presets
+/index.ts
+/type.d.ts
+
+# 测试文件
+__tests__
+*.test.ts
+*.spec.ts
+*.test.tsx
+*.spec.tsx
+/coverage
+
+# 配置文件
+vite.config.ts
+tsconfig.json
+.eslintrc.cjs
+.prettierrc
+.editorconfig
+.versionrc
+
+# 开发文件
+/examples
+.github
+pnpm-workspace.yaml
+pnpm-lock.yaml
+.gitignore
+.npmignore
+
+# Node
+node_modules
+
+# IDE
+.vscode
+.idea
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
