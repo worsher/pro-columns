@@ -1,5 +1,7 @@
+import { default as default_2 } from 'react';
 import { JSX as JSX_2 } from 'react/jsx-runtime';
 import { ParamsType } from '@ant-design/pro-components';
+import { default as Presets } from './presets';
 import { ProColumnsType } from './type';
 import { ProColumnsType as ProColumnsType_2 } from '../type';
 import { ProColumnsType as ProColumnsType_3 } from '../../type';
@@ -105,6 +107,33 @@ declare type ComponentAdapter<T = any> = {
 };
 
 /**
+ * 创建 Copy 策略
+ * 功能：
+ * 1. 为 columns 添加一键复制功能
+ * 2. 仅在 table 和 description 场景生效
+ * 3. 支持自定义提示文本
+ */
+export declare const Copy: (options?: CopyStrategyOptions) => ProColumnsType_2.StrategyItem;
+
+/**
+ * Copy 策略配置
+ */
+declare type CopyStrategyOptions = {
+    /**
+     * 是否启用复制功能
+     */
+    enable?: boolean;
+    /**
+     * 复制提示文本
+     */
+    tooltipText?: string;
+    /**
+     * 复制成功后的提示文本
+     */
+    successText?: string;
+};
+
+/**
  * 工具函数：创建策略函数
  * @param fn 策略处理函数（支持场景参数）
  * @returns 策略函数
@@ -145,6 +174,85 @@ declare type DefaultValueStrategyOptions = {
      * 根据字段类型自动推断合理的默认值
      */
     autoInfer?: boolean;
+};
+
+/**
+ * 创建 Editable 策略
+ * 功能：
+ * 1. 为表格单元格添加可编辑功能
+ * 2. 仅在 table 场景生效
+ * 3. 支持多种编辑类型
+ */
+export declare const Editable: (options?: EditableStrategyOptions) => ProColumnsType_2.StrategyItem;
+
+/**
+ * Editable 策略配置
+ */
+declare type EditableStrategyOptions = {
+    /**
+     * 是否启用可编辑功能
+     */
+    enable?: boolean;
+    /**
+     * 编辑类型
+     */
+    type?: 'text' | 'select' | 'date' | 'dateTime' | 'digit' | 'textarea';
+    /**
+     * 编辑时的配置
+     */
+    editableConfig?: {
+        /**
+         * 保存回调
+         */
+        onSave?: (key: any, record: any, newValue: any) => Promise<any>;
+        /**
+         * 取消回调
+         */
+        onCancel?: (key: any, record: any) => void;
+        /**
+         * 是否在编辑状态下才显示
+         */
+        editOnly?: boolean;
+        /**
+         * 额外的表单配置
+         */
+        formItemProps?: any;
+        /**
+         * 额外的字段配置
+         */
+        fieldProps?: any;
+    };
+};
+
+/**
+ * 创建 Enum 策略
+ * 功能：
+ * 1. 增强枚举值的渲染效果
+ * 2. 支持 badge、tag、text 三种渲染方式
+ * 3. 支持自定义颜色映射
+ */
+export declare const Enum: (options?: EnumStrategyOptions) => ProColumnsType_2.StrategyItem;
+
+/**
+ * Enum 策略配置
+ */
+declare type EnumStrategyOptions = {
+    /**
+     * 是否启用枚举渲染增强
+     */
+    enable?: boolean;
+    /**
+     * 渲染类型
+     */
+    type?: 'badge' | 'tag' | 'text';
+    /**
+     * 颜色映射（key 为枚举值，value 为颜色）
+     */
+    colorMap?: Record<string, string>;
+    /**
+     * 默认颜色
+     */
+    defaultColor?: string;
 };
 
 /**
@@ -223,6 +331,142 @@ export declare function getFieldType(column: ProColumnsType_3.ColumnType): strin
 export declare function hasField(column: ProColumnsType_3.ColumnType, field: string): boolean;
 
 /**
+ * 创建 Image 策略
+ * 功能：
+ * 1. 为 columns 添加图片预览功能
+ * 2. 仅在 table 和 description 场景生效
+ * 3. 支持单图和多图显示
+ */
+declare const Image_2: (options?: ImageStrategyOptions) => ProColumnsType_2.StrategyItem;
+export { Image_2 as Image }
+
+/**
+ * Image 策略配置
+ */
+declare type ImageStrategyOptions = {
+    /**
+     * 是否启用图片预览功能
+     */
+    enable?: boolean;
+    /**
+     * 图片宽度
+     */
+    width?: number | string;
+    /**
+     * 图片高度
+     */
+    height?: number | string;
+    /**
+     * 是否支持预览
+     */
+    preview?: boolean;
+    /**
+     * 加载失败时的占位图
+     */
+    fallback?: string;
+    /**
+     * 多图片时的分隔符（用于字符串分割）
+     */
+    separator?: string;
+    /**
+     * 最多显示图片数量
+     */
+    maxCount?: number;
+};
+
+/**
+ * 创建 Link 策略
+ * 功能：
+ * 1. 为 columns 添加链接跳转功能
+ * 2. 仅在 table 和 description 场景生效
+ * 3. 支持动态链接和点击事件
+ */
+export declare const Link: (options?: LinkStrategyOptions) => ProColumnsType_2.StrategyItem;
+
+/**
+ * Link 策略配置
+ */
+declare type LinkStrategyOptions = {
+    /**
+     * 是否启用链接功能
+     */
+    enable?: boolean;
+    /**
+     * 链接地址（支持字符串或函数）
+     */
+    href?: string | ((text: any, record: any) => string);
+    /**
+     * 打开方式
+     */
+    target?: '_blank' | '_self' | '_parent' | '_top';
+    /**
+     * 点击事件（如果提供，将覆盖 href 跳转）
+     */
+    onClick?: (text: any, record: any, event: default_2.MouseEvent) => void;
+    /**
+     * 链接文本（如果不提供，使用字段值）
+     */
+    text?: string | ((text: any, record: any) => string);
+};
+
+/**
+ * 创建 Permission 策略
+ * 功能：
+ * 1. 为字段添加权限控制
+ * 2. 支持角色和权限检查
+ * 3. 支持隐藏或禁用
+ */
+export declare const Permission: (options?: PermissionStrategyOptions) => ProColumnsType_2.StrategyItem;
+
+/**
+ * 权限检查函数类型
+ */
+declare type PermissionChecker = (context: {
+    roles?: string[];
+    permissions?: string[];
+    userRoles?: string[];
+    userPermissions?: string[];
+}) => boolean;
+
+/**
+ * Permission 策略配置
+ */
+declare type PermissionStrategyOptions = {
+    /**
+     * 是否启用权限控制
+     */
+    enable?: boolean;
+    /**
+     * 需要的角色列表（满足任一即可）
+     */
+    roles?: string[];
+    /**
+     * 需要的权限列表（满足任一即可）
+     */
+    permissions?: string[];
+    /**
+     * 当前用户的角色
+     */
+    userRoles?: string[];
+    /**
+     * 当前用户的权限
+     */
+    userPermissions?: string[];
+    /**
+     * 无权限时是否隐藏字段
+     */
+    hideWhenNoPermission?: boolean;
+    /**
+     * 无权限时是否禁用字段（仅在 form 场景有效）
+     */
+    disableWhenNoPermission?: boolean;
+    /**
+     * 自定义权限检查函数
+     */
+    checker?: PermissionChecker;
+};
+
+/**
  * 创建 Placeholder 策略
  * 功能：
  * 1. 自动为 columns 添加占位符文本
@@ -248,6 +492,8 @@ declare type PlaceholderStrategyOptions = {
      */
     includeSearch?: boolean;
 };
+
+export { Presets }
 
 /**
  * ProColumnsDescription 组件
@@ -517,6 +763,107 @@ declare type TooltipStrategyOptions = {
      * 在表单中是否显示提示
      */
     showInForm?: boolean;
+};
+
+/**
+ * 创建 Transform 策略
+ * 功能：
+ * 1. 为字段添加数据转换功能
+ * 2. 支持输入、输出、显示三个转换点
+ * 3. 适用于不同场景的数据格式转换
+ */
+export declare const Transform: (options?: TransformStrategyOptions) => ProColumnsType_2.StrategyItem;
+
+/**
+ * Transform 策略配置
+ */
+declare type TransformStrategyOptions = {
+    /**
+     * 是否启用数据转换
+     */
+    enable?: boolean;
+    /**
+     * 输入转换（表单输入时）
+     * 用于将用户输入的值转换为需要的格式
+     */
+    input?: (value: any, record?: any) => any;
+    /**
+     * 输出转换（表单提交时）
+     * 用于将表单值转换为提交给后端的格式
+     */
+    output?: (value: any, record?: any) => any;
+    /**
+     * 显示转换（仅用于展示）
+     * 用于将数据转换为显示格式
+     */
+    display?: (value: any, record?: any) => any;
+};
+
+/**
+ * 创建 Validation 策略
+ * 功能：
+ * 1. 为表单字段添加高级验证规则
+ * 2. 支持正则、范围、长度、自定义验证
+ * 3. 支持字段依赖
+ */
+export declare const Validation: (options?: ValidationStrategyOptions) => ProColumnsType_2.StrategyItem;
+
+/**
+ * Validation 策略配置
+ */
+declare type ValidationStrategyOptions = {
+    /**
+     * 是否启用验证
+     */
+    enable?: boolean;
+    /**
+     * 正则表达式验证
+     */
+    pattern?: RegExp;
+    /**
+     * 正则验证失败提示
+     */
+    patternMessage?: string;
+    /**
+     * 最小值（适用于数字）
+     */
+    min?: number;
+    /**
+     * 最小值验证失败提示
+     */
+    minMessage?: string;
+    /**
+     * 最大值（适用于数字）
+     */
+    max?: number;
+    /**
+     * 最大值验证失败提示
+     */
+    maxMessage?: string;
+    /**
+     * 最小长度（适用于字符串）
+     */
+    minLength?: number;
+    /**
+     * 最小长度验证失败提示
+     */
+    minLengthMessage?: string;
+    /**
+     * 最大长度（适用于字符串）
+     */
+    maxLength?: number;
+    /**
+     * 最大长度验证失败提示
+     */
+    maxLengthMessage?: string;
+    /**
+     * 自定义验证器
+     */
+    validator?: (rule: any, value: any, callback: (error?: string) => void, allValues?: any) => Promise<void> | void;
+    /**
+     * 依赖字段（当依赖字段变化时重新验证）
+     */
+    dependencies?: string[];
 };
 
 /**

@@ -26,6 +26,14 @@ export {
   Tooltip,
   DefaultValue,
   Width,
+  Copy,
+  Link,
+  Image,
+  Enum,
+  Validation,
+  Permission,
+  Transform,
+  Editable,
   // 工具函数
   createStrategy,
   deepMerge,
@@ -35,6 +43,9 @@ export {
   getFieldType,
   generatePlaceholder,
 } from './strategy'
+
+// 导出预设系统
+export { default as Presets } from './presets'
 
 // 导出封装组件
 export { default as ProColumnsTable } from './components/ProColumnsTable'

@@ -4,11 +4,12 @@
 
 ## ✨ 特性
 
-- 🎯 **策略系统**：内置 8 种常用策略（Search、Sort、Required、Placeholder、Format、Tooltip、DefaultValue、Width），支持自定义扩展
+- 🎯 **策略系统**：内置 16 种常用策略，覆盖常见业务场景，支持自定义扩展
+- 📦 **预设系统**：提供 12+ 开箱即用的策略预设组合，快速开发
 - 🔄 **统一数据体系**：一套 columns 配置，自动适配多种组件（ProTable、ProForm、ProDescription）
 - 🎨 **场景化配置**：支持为不同场景（table/form/description）提供差异化配置
 - 🛠️ **高度可扩展**：支持自定义策略，灵活的策略模式（merge/replace）
-- 📦 **完整 TypeScript 支持**：完善的类型定义，开发体验友好
+- 📦 **完整 TypeScript 支持**：完善的类型定义，泛型支持，开发体验友好
 - 🚀 **开箱即用**：提供封装组件，零配置快速上手
 
 ## 📦 安装
@@ -156,6 +157,14 @@ const descColumns = Component.transform('proDescription', columns, {
 | **Tooltip** | 添加提示信息 | 所有场景 |
 | **DefaultValue** | 设置默认值 | ProForm |
 | **Width** | 场景化宽度配置 | 支持为不同场景设置不同宽度 |
+| **Copy** | 一键复制功能 | ProTable、ProDescription |
+| **Link** | 链接跳转 | ProTable、ProDescription |
+| **Image** | 图片预览（支持多图） | ProTable、ProDescription |
+| **Enum** | 枚举渲染增强（Badge/Tag/Text） | ProTable、ProDescription |
+| **Validation** | 高级验证规则（正则、范围、自定义） | ProForm |
+| **Permission** | 权限控制（隐藏/禁用） | 所有场景 |
+| **Transform** | 数据转换（输入/输出/显示） | 所有场景 |
+| **Editable** | 可编辑单元格 | ProTable |
 
 #### 策略使用示例
 
@@ -229,7 +238,84 @@ const columns = [{
 
 **参考文档：** [场景化配置使用指南](./SCENE_USAGE.md)
 
-### 3. 运行时策略
+### 3. 预设系统
+
+预设（Preset）是预先组合好的策略集合，提供开箱即用的配置方案。
+
+#### 内置预设
+
+| 预设 | 包含策略 | 适用场景 |
+|------|----------|----------|
+| **searchableField()** | Search + Sort + Placeholder | 可搜索可排序的字段 |
+| **requiredField()** | Required + Placeholder | 必填字段 |
+| **moneyField()** | Format(money) + Width + Sort + Copy | 金额字段 |
+| **dateField()** | Format(date) + Sort + Width | 日期字段 |
+| **dateTimeField()** | Format(dateTime) + Sort + Width | 日期时间字段 |
+| **enumField()** | Enum + Search + Required + Placeholder | 枚举字段 |
+| **imageField()** | Image + Width | 图片字段 |
+| **linkField()** | Link + Copy + Width | 链接字段 |
+| **numberField()** | Format(number) + Sort + Width | 数字字段 |
+| **percentField()** | Format(percent) + Sort + Width | 百分比字段 |
+| **editableField()** | Editable + Sort | 可编辑字段 |
+| **fullField()** | Search + Sort + Required + Placeholder + Copy | 完整 CRUD 字段 |
+
+#### 使用预设
+
+```tsx
+import { Presets } from 'pro-columns'
+
+const columns = [
+  {
+    title: '金额',
+    dataIndex: 'amount',
+    strategys: [{
+      mode: 'merge',
+      strategy: Presets.moneyField({ precision: 2 }),
+    }],
+  },
+  {
+    title: '创建时间',
+    dataIndex: 'createdAt',
+    strategys: [{
+      mode: 'merge',
+      strategy: Presets.dateTimeField(),
+    }],
+  },
+  {
+    title: '头像',
+    dataIndex: 'avatar',
+    strategys: [{
+      mode: 'merge',
+      strategy: Presets.imageField({ width: 80, height: 80 }),
+    }],
+  },
+]
+```
+
+#### 自定义预设
+
+```tsx
+import { Presets, Search, Sort, Copy } from 'pro-columns'
+
+// 注册自定义预设
+Presets.register('myCustomField', () => [
+  Search(),
+  Sort({ defaultSorter: 'descend' }),
+  Copy(),
+])
+
+// 使用自定义预设
+const columns = [{
+  title: '自定义字段',
+  dataIndex: 'custom',
+  strategys: [{
+    mode: 'merge',
+    strategy: Presets.get('myCustomField')!(),
+  }],
+}]
+```
+
+### 4. 运行时策略
 
 支持在运行时动态应用策略，而无需修改 columns 定义：
 
@@ -256,7 +342,7 @@ const columns = Component.transform('proForm', baseColumns, {
 })
 ```
 
-### 4. 枚举值统一管理
+### 5. 枚举值统一管理
 
 通过 `enumKey` 引用枚举，避免重复定义：
 

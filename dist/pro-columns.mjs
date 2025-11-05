@@ -1,52 +1,52 @@
-import Me from "react";
-import { ProTable as bt, BetaSchemaForm as Tt, ProDescriptions as Rt } from "@ant-design/pro-components";
-function We(r, a) {
-  const t = { ...r };
-  return Object.keys(a).forEach((i) => {
-    const o = a[i], u = t[i];
-    o && typeof o == "object" && !Array.isArray(o) && u && typeof u == "object" && !Array.isArray(u) ? t[i] = We(u, o) : t[i] = o;
+import D from "react";
+import { ProTable as wt, BetaSchemaForm as Ct, ProDescriptions as It } from "@ant-design/pro-components";
+function qe(a, r) {
+  const t = { ...a };
+  return Object.keys(r).forEach((n) => {
+    const i = r[n], o = t[n];
+    i && typeof i == "object" && !Array.isArray(i) && o && typeof o == "object" && !Array.isArray(o) ? t[n] = qe(o, i) : t[n] = i;
   }), t;
 }
-function O(r, a) {
-  return a in r && r[a] !== void 0;
+function P(a, r) {
+  return r in a && a[r] !== void 0;
 }
-function R(r, a, t) {
-  return O(r, a) ? r[a] : t;
+function T(a, r, t) {
+  return P(a, r) ? a[r] : t;
 }
-function Nt(r, a, t) {
+function Xt(a, r, t) {
   return {
-    ...r,
-    [a]: t
+    ...a,
+    [r]: t
   };
 }
-function Et(r) {
-  if (O(r, "valueType"))
-    return R(r, "valueType", "text") || "text";
-  if (O(r, "valueEnum")) return "select";
-  if (O(r, "fieldProps")) {
-    const a = R(r, "fieldProps");
-    if ((a == null ? void 0 : a.mode) === "multiple") return "select";
-    if ((a == null ? void 0 : a.type) === "password") return "password";
+function Ft(a) {
+  if (P(a, "valueType"))
+    return T(a, "valueType", "text") || "text";
+  if (P(a, "valueEnum")) return "select";
+  if (P(a, "fieldProps")) {
+    const r = T(a, "fieldProps");
+    if ((r == null ? void 0 : r.mode) === "multiple") return "select";
+    if ((r == null ? void 0 : r.type) === "password") return "password";
   }
   return "text";
 }
-function Ie(r, a = "input") {
-  const t = R(r, "title", "字段"), i = Et(r), o = {
+function He(a, r = "input") {
+  const t = T(a, "title", "字段"), n = Ft(a), i = {
     search: "搜索",
     input: "请输入",
     select: "请选择"
   };
-  let u = a;
-  return ["select", "radio", "checkbox", "dateRange", "timeRange"].includes(i) && (u = "select"), `${o[u]}${t}`;
+  let o = r;
+  return ["select", "radio", "checkbox", "dateRange", "timeRange"].includes(n) && (o = "select"), `${i[o]}${t}`;
 }
-function F(r) {
-  return (a, t) => {
-    const i = r(a, t);
-    return We(a, i);
+function I(a) {
+  return (r, t) => {
+    const n = a(r, t);
+    return qe(r, n);
   };
 }
-const Lt = (r = {}) => {
-  const { enable: a = !0, searchTypeMap: t = {} } = r, i = {
+const de = (a = {}) => {
+  const { enable: r = !0, searchTypeMap: t = {} } = a, n = {
     text: "text",
     textarea: "text",
     password: "text",
@@ -64,178 +64,178 @@ const Lt = (r = {}) => {
     checkbox: "select",
     ...t
   };
-  return F((o) => {
-    if (!a || O(o, "search") && !R(o, "search"))
+  return I((i) => {
+    if (!r || P(i, "search") && !T(i, "search"))
       return { search: !1 };
-    if (O(o, "search") && typeof R(o, "search") == "object")
+    if (P(i, "search") && typeof T(i, "search") == "object")
       return {};
-    const u = R(o, "valueType", "text") || "text", c = i[u] || "text";
+    const o = T(i, "valueType", "text") || "text", l = n[o] || "text";
     return {
       search: !0,
       // 在 fieldProps 中设置搜索相关属性（如果需要）
       fieldProps: {
-        ...R(o, "fieldProps", {})
+        ...T(i, "fieldProps", {})
       },
       // 某些组件可能需要 searchType
-      ...c !== "text" ? { searchType: c } : {}
+      ...l !== "text" ? { searchType: l } : {}
     };
   });
-}, Ut = (r = {}) => {
-  const { enable: a = !0, defaultSorter: t = !1 } = r;
-  return F((i) => {
-    if (!a || O(i, "sorter") && R(i, "sorter") === !1)
+}, M = (a = {}) => {
+  const { enable: r = !0, defaultSorter: t = !1 } = a;
+  return I((n) => {
+    if (!r || P(n, "sorter") && T(n, "sorter") === !1)
       return { sorter: !1 };
-    if (O(i, "sorter") && typeof R(i, "sorter") == "function")
+    if (P(n, "sorter") && typeof T(n, "sorter") == "function")
       return {};
-    const o = R(i, "dataIndex");
-    if (!o)
+    const i = T(n, "dataIndex");
+    if (!i)
       return {};
-    const u = R(i, "valueType", "text") || "text";
-    let c = !0;
-    return ["digit", "money", "percent"].includes(u) ? c = (g, l) => {
-      const m = g[o] || 0, d = l[o] || 0;
-      return m - d;
-    } : ["date", "dateTime", "time"].includes(u) ? c = (g, l) => {
-      const m = new Date(g[o] || 0).getTime(), d = new Date(l[o] || 0).getTime();
-      return m - d;
-    } : u === "text" && (c = (g, l) => {
-      const m = String(g[o] || ""), d = String(l[o] || "");
-      return m.localeCompare(d);
+    const o = T(n, "valueType", "text") || "text";
+    let l = !0;
+    return ["digit", "money", "percent"].includes(o) ? l = (m, u) => {
+      const g = m[i] || 0, f = u[i] || 0;
+      return g - f;
+    } : ["date", "dateTime", "time"].includes(o) ? l = (m, u) => {
+      const g = new Date(m[i] || 0).getTime(), f = new Date(u[i] || 0).getTime();
+      return g - f;
+    } : o === "text" && (l = (m, u) => {
+      const g = String(m[i] || ""), f = String(u[i] || "");
+      return g.localeCompare(f);
     }), {
-      sorter: c,
+      sorter: l,
       ...t ? { defaultSortOrder: t } : {}
     };
   });
-}, Kt = (r = {}) => {
-  const { enable: a = !0, messageTemplate: t } = r, i = (o) => `请输入${o}`;
-  return F((o) => {
-    if (!a)
+}, pe = (a = {}) => {
+  const { enable: r = !0, messageTemplate: t } = a, n = (i) => `请输入${i}`;
+  return I((i) => {
+    if (!r)
       return {};
-    const u = R(o, "formItemProps.rules", []) || [];
-    if (u.some((E) => E.required))
+    const o = T(i, "formItemProps.rules", []) || [];
+    if (o.some((y) => y.required))
       return {};
-    if (!R(o, "dataIndex"))
+    if (!T(i, "dataIndex"))
       return {};
-    const l = R(o, "title", "此字段") || "此字段", m = typeof t == "function" ? t(l) : t || i(l), d = R(o, "valueType", "text") || "text", p = ["select", "radio", "checkbox", "dateRange", "timeRange"].includes(
-      d
-    ) ? m.replace("输入", "选择") : m;
+    const u = T(i, "title", "此字段") || "此字段", g = typeof t == "function" ? t(u) : t || n(u), f = T(i, "valueType", "text") || "text", c = ["select", "radio", "checkbox", "dateRange", "timeRange"].includes(
+      f
+    ) ? g.replace("输入", "选择") : g;
     return {
       formItemProps: {
-        ...R(o, "formItemProps", {}),
+        ...T(i, "formItemProps", {}),
         rules: [
-          ...u,
+          ...o,
           {
             required: !0,
-            message: p
+            message: c
           }
         ]
       }
     };
   });
-}, qt = (r = {}) => {
-  const { enable: a = !0, template: t, includeSearch: i = !0 } = r;
-  return F((o) => {
-    if (!a)
+}, te = (a = {}) => {
+  const { enable: r = !0, template: t, includeSearch: n = !0 } = a;
+  return I((i) => {
+    if (!r)
       return {};
-    const u = R(o, "fieldProps", {});
-    if (u.placeholder)
+    const o = T(i, "fieldProps", {});
+    if (o.placeholder)
       return {};
-    const c = R(o, "valueType", "text") || "text", l = ["select", "radio", "checkbox", "dateRange", "timeRange"].includes(
-      c
-    ) ? "select" : "input", m = t ? t(o, l) : Ie(o, l), d = {
+    const l = T(i, "valueType", "text") || "text", u = ["select", "radio", "checkbox", "dateRange", "timeRange"].includes(
+      l
+    ) ? "select" : "input", g = t ? t(i, u) : He(i, u), f = {
       fieldProps: {
-        ...u,
-        placeholder: m
+        ...o,
+        placeholder: g
       }
     };
-    if (i && O(o, "search")) {
-      const v = R(o, "search");
-      if (v === !0 || typeof v == "object" && v !== null) {
-        const p = t ? t(o, "search") : Ie(o, "search");
-        d.fieldProps.placeholder = p;
+    if (n && P(i, "search")) {
+      const p = T(i, "search");
+      if (p === !0 || typeof p == "object" && p !== null) {
+        const c = t ? t(i, "search") : He(i, "search");
+        f.fieldProps.placeholder = c;
       }
     }
-    return d;
+    return f;
   });
 };
-function ie(r, a, t = !0) {
-  if (r == null || isNaN(r)) return "-";
-  const i = {
-    minimumFractionDigits: a,
-    maximumFractionDigits: a,
+function he(a, r, t = !0) {
+  if (a == null || isNaN(a)) return "-";
+  const n = {
+    minimumFractionDigits: r,
+    maximumFractionDigits: r,
     useGrouping: t
   };
-  return new Intl.NumberFormat("zh-CN", i).format(r);
+  return new Intl.NumberFormat("zh-CN", n).format(a);
 }
-function xt(r, a = 2, t = "¥", i = !0) {
-  if (r == null || isNaN(r)) return "-";
-  const o = ie(r, a, i);
-  return `${t}${o}`;
+function jt(a, r = 2, t = "¥", n = !0) {
+  if (a == null || isNaN(a)) return "-";
+  const i = he(a, r, n);
+  return `${t}${i}`;
 }
-function St(r, a = 2) {
-  return r == null || isNaN(r) ? "-" : `${ie(r, a, !1)}%`;
+function Ot(a, r = 2) {
+  return a == null || isNaN(a) ? "-" : `${he(a, r, !1)}%`;
 }
-function _t(r, a = "YYYY-MM-DD") {
-  if (!r) return "-";
-  const t = new Date(r);
+function Dt(a, r = "YYYY-MM-DD") {
+  if (!a) return "-";
+  const t = new Date(a);
   if (isNaN(t.getTime())) return "-";
-  const i = t.getFullYear(), o = String(t.getMonth() + 1).padStart(2, "0"), u = String(t.getDate()).padStart(2, "0"), c = String(t.getHours()).padStart(2, "0"), g = String(t.getMinutes()).padStart(2, "0"), l = String(t.getSeconds()).padStart(2, "0");
-  return a.replace("YYYY", String(i)).replace("MM", o).replace("DD", u).replace("HH", c).replace("mm", g).replace("ss", l);
+  const n = t.getFullYear(), i = String(t.getMonth() + 1).padStart(2, "0"), o = String(t.getDate()).padStart(2, "0"), l = String(t.getHours()).padStart(2, "0"), m = String(t.getMinutes()).padStart(2, "0"), u = String(t.getSeconds()).padStart(2, "0");
+  return r.replace("YYYY", String(n)).replace("MM", i).replace("DD", o).replace("HH", l).replace("mm", m).replace("ss", u);
 }
-const Bt = (r = {}) => {
+const K = (a = {}) => {
   const {
-    enable: a = !0,
+    enable: r = !0,
     type: t,
-    precision: i,
-    symbol: o = "¥",
-    useGrouping: u = !0,
-    dateFormat: c = "YYYY-MM-DD",
-    formatter: g
-  } = r;
-  return F((l) => {
-    if (!a)
+    precision: n,
+    symbol: i = "¥",
+    useGrouping: o = !0,
+    dateFormat: l = "YYYY-MM-DD",
+    formatter: m
+  } = a;
+  return I((u) => {
+    if (!r)
       return {};
-    if (O(l, "render") && !g)
+    if (P(u, "render") && !m)
       return {};
-    const m = R(l, "valueType", "text") || "text";
-    let d = t;
-    if (d || (m === "money" ? d = "money" : m === "digit" ? d = "number" : ["date", "dateTime"].includes(m) ? d = "date" : m === "percent" && (d = "percent")), !d && !g)
+    const g = T(u, "valueType", "text") || "text";
+    let f = t;
+    if (f || (g === "money" ? f = "money" : g === "digit" ? f = "number" : ["date", "dateTime"].includes(g) ? f = "date" : g === "percent" && (f = "percent")), !f && !m)
       return {};
-    let v;
-    return g ? v = (p, E) => g(p, E) : d === "money" ? v = (p) => xt(p, i, o, u) : d === "number" ? v = (p) => ie(p, i, u) : d === "percent" ? v = (p) => St(p, i) : d === "date" && (v = (p) => _t(p, m === "dateTime" ? "YYYY-MM-DD HH:mm:ss" : c)), v ? {
-      render: v
+    let p;
+    return m ? p = (c, y) => m(c, y) : f === "money" ? p = (c) => jt(c, n, i, o) : f === "number" ? p = (c) => he(c, n, o) : f === "percent" ? p = (c) => Ot(c, n) : f === "date" && (p = (c) => Dt(c, g === "dateTime" ? "YYYY-MM-DD HH:mm:ss" : l)), p ? {
+      render: p
     } : {};
   });
-}, Ht = (r = {}) => {
+}, er = (a = {}) => {
   const {
-    enable: a = !0,
+    enable: r = !0,
     content: t,
-    formType: i = "tooltip",
-    showInTable: o = !0,
-    showInForm: u = !0
-  } = r;
-  return F((c) => {
-    if (!a)
+    formType: n = "tooltip",
+    showInTable: i = !0,
+    showInForm: o = !0
+  } = a;
+  return I((l) => {
+    if (!r)
       return {};
-    const g = typeof t == "function" ? t(c) : t;
-    if (!g)
+    const m = typeof t == "function" ? t(l) : t;
+    if (!m)
       return {};
-    const l = {};
-    if (o && (O(c, "tooltip") || (l.tooltip = g)), u) {
-      const m = R(c, "formItemProps", {});
-      i === "tooltip" ? m.tooltip || (l.formItemProps = {
-        ...m,
-        tooltip: g
-      }) : m.extra || (l.formItemProps = {
-        ...m,
-        extra: g
+    const u = {};
+    if (i && (P(l, "tooltip") || (u.tooltip = m)), o) {
+      const g = T(l, "formItemProps", {});
+      n === "tooltip" ? g.tooltip || (u.formItemProps = {
+        ...g,
+        tooltip: m
+      }) : g.extra || (u.formItemProps = {
+        ...g,
+        extra: m
       });
     }
-    return l;
+    return u;
   });
 };
-function Pt(r) {
-  switch (R(r, "valueType", "text")) {
+function kt(a) {
+  switch (T(a, "valueType", "text")) {
     case "digit":
     case "money":
     case "percent":
@@ -253,7 +253,7 @@ function Pt(r) {
       return [];
     case "select":
     case "radio":
-      const t = R(r, "valueEnum");
+      const t = T(a, "valueEnum");
       return t && typeof t == "object" && Object.keys(t)[0] || null;
     case "textarea":
     case "text":
@@ -262,27 +262,27 @@ function Pt(r) {
       return "";
   }
 }
-const Gt = (r = {}) => {
-  const { enable: a = !0, value: t, autoInfer: i = !1 } = r;
-  return F((o) => {
-    if (!a)
+const tr = (a = {}) => {
+  const { enable: r = !0, value: t, autoInfer: n = !1 } = a;
+  return I((i) => {
+    if (!r)
       return {};
-    if (O(o, "initialValue"))
+    if (P(i, "initialValue"))
       return {};
-    let u;
+    let o;
     if (t !== void 0)
-      u = typeof t == "function" ? t() : t;
-    else if (i)
-      u = Pt(o);
+      o = typeof t == "function" ? t() : t;
+    else if (n)
+      o = kt(i);
     else
       return {};
     return {
-      initialValue: u
+      initialValue: o
     };
   });
 };
-function wt(r) {
-  const a = R(r, "valueType", "text") || "text";
+function Mt(a) {
+  const r = T(a, "valueType", "text") || "text";
   return {
     // 数字类型
     digit: 100,
@@ -307,177 +307,403 @@ function wt(r) {
     text: void 0,
     textarea: void 0,
     password: void 0
-  }[a];
+  }[r];
 }
-function Ct(r, a, t) {
-  const i = R(r, "title", "");
-  if (!i) return 0;
-  let o = 0, u = 0;
-  for (const g of i)
-    /[\u4e00-\u9fa5]/.test(g) ? o++ : u++;
-  const c = o * a + u * (a * 0.6) + t;
-  return Math.ceil(c);
+function Yt(a, r, t) {
+  const n = T(a, "title", "");
+  if (!n) return 0;
+  let i = 0, o = 0;
+  for (const m of n)
+    /[\u4e00-\u9fa5]/.test(m) ? i++ : o++;
+  const l = i * r + o * (r * 0.6) + t;
+  return Math.ceil(l);
 }
-function H(r, a) {
-  const { value: t, auto: i, min: o, max: u, charWidth: c = 14, padding: g = 48 } = a;
-  let l;
+function re(a, r) {
+  const { value: t, auto: n, min: i, max: o, charWidth: l = 14, padding: m = 48 } = r;
+  let u;
   if (t !== void 0)
-    l = t;
-  else if (i) {
-    const m = wt(r);
-    if (m)
-      l = m;
+    u = t;
+  else if (n) {
+    const g = Mt(a);
+    if (g)
+      u = g;
     else {
-      const d = Ct(r, c, g);
-      d > 0 && (l = d);
+      const f = Yt(a, l, m);
+      f > 0 && (u = f);
     }
   }
-  return l !== void 0 && (o !== void 0 && l < o && (l = o), u !== void 0 && l > u && (l = u)), l;
+  return u !== void 0 && (i !== void 0 && u < i && (u = i), o !== void 0 && u > o && (u = o)), u;
 }
-const Jt = (r = {}) => {
+const V = (a = {}) => {
   const {
-    enable: a = !0,
+    enable: r = !0,
     value: t,
-    auto: i = !1,
-    min: o,
-    max: u,
-    charWidth: c = 14,
-    padding: g = 48,
-    table: l,
-    form: m,
-    description: d
-  } = r;
-  return F((v, p) => {
-    if (!a)
+    auto: n = !1,
+    min: i,
+    max: o,
+    charWidth: l = 14,
+    padding: m = 48,
+    table: u,
+    form: g,
+    description: f
+  } = a;
+  return I((p, c) => {
+    if (!r)
       return {};
-    if (O(v, "width"))
+    if (P(p, "width"))
       return {};
-    if (p === "table") {
-      if (l === null)
+    if (c === "table") {
+      if (u === null)
         return {};
-      let w;
-      return typeof l == "number" ? w = l : l && typeof l == "object" ? w = H(v, {
-        ...l,
-        charWidth: c,
-        padding: g
-      }) : w = H(v, {
+      let S;
+      return typeof u == "number" ? S = u : u && typeof u == "object" ? S = re(p, {
+        ...u,
+        charWidth: l,
+        padding: m
+      }) : S = re(p, {
         value: t,
-        auto: i,
-        min: o,
-        max: u,
-        charWidth: c,
-        padding: g
-      }), w !== void 0 ? { width: w } : {};
+        auto: n,
+        min: i,
+        max: o,
+        charWidth: l,
+        padding: m
+      }), S !== void 0 ? { width: S } : {};
     } else {
-      if (p === "form")
-        return m === null ? {} : m && ["sm", "md", "lg", "xl"].includes(m) ? { width: m } : {};
-      if (p === "description") {
-        if (d === null)
+      if (c === "form")
+        return g === null ? {} : g && ["sm", "md", "lg", "xl"].includes(g) ? { width: g } : {};
+      if (c === "description") {
+        if (f === null)
           return {};
-        if (typeof d == "number")
-          return { width: d };
-        const w = H(v, {
+        if (typeof f == "number")
+          return { width: f };
+        const S = re(p, {
           value: t,
-          auto: i,
-          min: o,
-          max: u,
-          charWidth: c,
-          padding: g
+          auto: n,
+          min: i,
+          max: o,
+          charWidth: l,
+          padding: m
         });
-        return w !== void 0 ? { width: w } : {};
+        return S !== void 0 ? { width: S } : {};
       }
     }
-    const E = H(v, {
+    const y = re(p, {
       value: t,
-      auto: i,
-      min: o,
-      max: u,
-      charWidth: c,
-      padding: g
+      auto: n,
+      min: i,
+      max: o,
+      charWidth: l,
+      padding: m
     });
-    return E !== void 0 ? { width: E } : {};
+    return y !== void 0 ? { width: y } : {};
   });
-}, Ot = (r, a) => {
-  if (!r.strategys || r.strategys.length === 0 || a.mode === "replace")
-    return a;
+}, me = (a = {}) => {
+  const { enable: r = !0, tooltipText: t = "复制", successText: n = "复制成功" } = a;
+  return I((i, o) => r ? o === "form" ? {} : P(i, "copyable") ? {} : {
+    copyable: {
+      text: (l) => l ? String(l) : "",
+      tooltips: [t, n]
+    }
+  } : {});
+}, At = (a = {}) => {
+  const { enable: r = !0, href: t, target: n = "_blank", onClick: i, text: o } = a;
+  return I((l, m) => r ? m === "form" ? {} : P(l, "render") && !t && !i ? {} : {
+    render: (g, f) => {
+      const p = o ? typeof o == "function" ? o(g, f) : o : g || "-";
+      if (i)
+        return D.createElement(
+          "a",
+          {
+            style: { cursor: "pointer" },
+            onClick: (y) => {
+              y.preventDefault(), i(g, f, y);
+            }
+          },
+          p
+        );
+      const c = t ? typeof t == "function" ? t(g, f) : t : g;
+      return c ? D.createElement(
+        "a",
+        {
+          href: c,
+          target: n,
+          rel: n === "_blank" ? "noopener noreferrer" : void 0
+        },
+        p
+      ) : p;
+    }
+  } : {});
+}, Wt = (a = {}) => {
+  const {
+    enable: r = !0,
+    width: t = 60,
+    height: n = 60,
+    preview: i = !0,
+    fallback: o = "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjQiIGhlaWdodD0iNjQiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHJlY3Qgd2lkdGg9IjY0IiBoZWlnaHQ9IjY0IiBmaWxsPSIjZjBmMGYwIi8+PHRleHQgeD0iNTAlIiB5PSI1MCUiIGZvbnQtc2l6ZT0iMTIiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGR5PSIuM2VtIiBmaWxsPSIjOTk5Ij7lm77niYc8L3RleHQ+PC9zdmc+",
+    separator: l = ",",
+    maxCount: m = 5
+  } = a;
+  return I((u, g) => r ? g === "form" ? {} : P(u, "render") ? {} : {
+    render: (p) => {
+      if (!p)
+        return "-";
+      let c = [];
+      typeof p == "string" ? c = p.split(l).filter((C) => C.trim()) : Array.isArray(p) ? c = p : c = [String(p)];
+      const y = c.slice(0, m), S = c.length > m, $ = require("antd").Image, Y = require("antd").Space;
+      return D.createElement(
+        Y,
+        { size: 8 },
+        ...y.map(
+          (C, _) => D.createElement($, {
+            key: _,
+            src: C,
+            width: t,
+            height: n,
+            preview: i ? {
+              src: C
+            } : !1,
+            fallback: o,
+            style: { objectFit: "cover" }
+          })
+        ),
+        S && D.createElement(
+          "span",
+          { style: { color: "#999", fontSize: "12px" } },
+          `+${c.length - m}`
+        )
+      );
+    }
+  } : {});
+}, Vt = (a = {}) => {
+  const { enable: r = !0, type: t = "badge", colorMap: n = {}, defaultColor: i = "default" } = a;
+  return I((o, l) => r ? l === "form" ? {} : !P(o, "valueEnum") && !P(o, "enumKey") ? {} : P(o, "render") ? {} : t === "text" ? {} : {
+    render: (u) => {
+      if (u == null)
+        return "-";
+      const f = (T(o, "valueEnum", {}) || {})[u];
+      if (!f)
+        return u;
+      const p = f.text || f.label || u, c = f.status || n[u] || i;
+      if (t === "badge") {
+        const y = require("antd").Badge;
+        return D.createElement(y, {
+          status: c,
+          text: p
+        });
+      }
+      if (t === "tag") {
+        const y = require("antd").Tag;
+        return D.createElement(y, { color: c }, p);
+      }
+      return p;
+    }
+  } : {});
+}, rr = (a = {}) => {
+  const {
+    enable: r = !0,
+    pattern: t,
+    patternMessage: n = "格式不正确",
+    min: i,
+    minMessage: o,
+    max: l,
+    maxMessage: m,
+    minLength: u,
+    minLengthMessage: g,
+    maxLength: f,
+    maxLengthMessage: p,
+    validator: c,
+    dependencies: y
+  } = a;
+  return I((S, $) => {
+    if (!r)
+      return {};
+    if ($ !== "form")
+      return {};
+    const Y = T(
+      S,
+      "formItemProps.rules",
+      T(S, "rules", [])
+    ) || [], C = [];
+    t && C.push({
+      pattern: t,
+      message: n
+    }), i !== void 0 && C.push({
+      type: "number",
+      min: i,
+      message: o || `最小值为 ${i}`
+    }), l !== void 0 && C.push({
+      type: "number",
+      max: l,
+      message: m || `最大值为 ${l}`
+    }), u !== void 0 && C.push({
+      min: u,
+      message: g || `最少输入 ${u} 个字符`
+    }), f !== void 0 && C.push({
+      max: f,
+      message: p || `最多输入 ${f} 个字符`
+    }), c && C.push({
+      validator: c
+    });
+    const _ = [...Y, ...C], N = {};
+    return _.length > 0 && (N.formItemProps = {
+      ...T(S, "formItemProps", {}),
+      rules: _
+    }), y && y.length > 0 && (N.formItemProps = {
+      ...N.formItemProps,
+      dependencies: y
+    }), N;
+  });
+};
+function $t(a) {
+  const { roles: r, permissions: t, userRoles: n = [], userPermissions: i = [] } = a;
+  return !!((!r || r.length === 0) && (!t || t.length === 0) || r && r.length > 0 && r.some((l) => n.includes(l)) || t && t.length > 0 && t.some((l) => i.includes(l)));
+}
+const nr = (a = {}) => {
+  const {
+    enable: r = !0,
+    roles: t,
+    permissions: n,
+    userRoles: i,
+    userPermissions: o,
+    hideWhenNoPermission: l = !0,
+    disableWhenNoPermission: m = !1,
+    checker: u
+  } = a;
+  return I((g, f) => {
+    if (!r)
+      return {};
+    if (u ? u({ roles: t, permissions: n, userRoles: i, userPermissions: o }) : $t({ roles: t, permissions: n, userRoles: i, userPermissions: o }))
+      return {};
+    const c = {};
+    return l && (f === "table" ? c.hideInTable = !0 : f === "form" ? c.hideInForm = !0 : f === "description" && (c.hideInDescriptions = !0)), m && f === "form" && !l && (c.fieldProps = {
+      disabled: !0
+    }, c.editable = !1), c;
+  });
+}, ar = (a = {}) => {
+  const { enable: r = !0, input: t, output: n, display: i } = a;
+  return I((o, l) => {
+    if (!r)
+      return {};
+    const m = {};
+    if ((l === "table" || l === "description") && i && (P(o, "render") || (m.render = (u, g) => i(u, g) ?? u ?? "-")), l === "form") {
+      const u = T(o, "fieldProps", {}), g = T(o, "convertValue"), f = T(o, "transform");
+      t && (m.fieldProps = {
+        ...u,
+        // 保留原有的 getValueFromEvent，如果有的话
+        ...u.getValueFromEvent ? {
+          getValueFromEvent: (...p) => {
+            const c = u.getValueFromEvent(...p);
+            return t(c);
+          }
+        } : {
+          getValueFromEvent: (p) => t(p)
+        }
+      }), n && (g || (m.convertValue = (p, c) => n(p, c)), f || (m.transform = (p) => n(p)));
+    }
+    return m;
+  });
+}, ir = (a = {}) => {
+  const { enable: r = !0, type: t, editableConfig: n = {} } = a;
+  return I((i, o) => {
+    if (!r)
+      return {};
+    if (o !== "table")
+      return {};
+    if (P(i, "editable"))
+      return {};
+    const m = {
+      type: t || T(i, "valueType", "text")
+    };
+    return n.onSave && (m.onSave = async (u, g, f, p) => {
+      const c = T(i, "dataIndex"), y = c ? g[c] : void 0;
+      return n.onSave(u, g, y);
+    }), n.onCancel && (m.onCancel = (u, g) => {
+      n.onCancel(u, g);
+    }), n.formItemProps && (m.formItemProps = n.formItemProps), n.fieldProps && (m.fieldProps = n.fieldProps), {
+      editable: () => m
+    };
+  });
+}, Nt = (a, r) => {
+  if (!a.strategys || a.strategys.length === 0 || r.mode === "replace")
+    return r;
   {
     const t = [];
-    return r.strategys.forEach((i) => {
-      t.push(...i.strategy);
-    }), t.push(...a.strategy), {
+    return a.strategys.forEach((n) => {
+      t.push(...n.strategy);
+    }), t.push(...r.strategy), {
       mode: "merge",
       strategy: t
     };
   }
-}, jt = (r, a, t) => {
-  let i = { ...r };
-  return a.forEach((o) => {
-    if (o.scene) {
-      const u = Array.isArray(o.scene) ? o.scene : [o.scene];
-      if (t && !u.includes(t))
+}, Lt = (a, r, t) => {
+  let n = { ...a };
+  return r.forEach((i) => {
+    if (i.scene) {
+      const o = Array.isArray(i.scene) ? i.scene : [i.scene];
+      if (t && !o.includes(t))
         return;
     }
-    o.strategy.forEach((u) => {
-      const c = u(i, t);
-      i = { ...i, ...c };
+    i.strategy.forEach((o) => {
+      const l = o(n, t);
+      n = { ...n, ...l };
     });
-  }), delete i.strategys, i;
-}, Dt = (r, a) => r.map((i) => ({ ...i })).map((i) => i.strategys ? (i.strategys = i.strategys.map((o) => Ot(i, o)), jt(i, i.strategys, a)) : i), Ft = (r) => {
+  }), delete n.strategys, n;
+}, Ht = (a, r) => a.map((n) => ({ ...n })).map((n) => n.strategys ? (n.strategys = n.strategys.map((i) => Nt(n, i)), Lt(n, n.strategys, r)) : n), Bt = (a) => {
   const {
-    columns: a,
+    columns: r,
     enums: t = {},
-    scene: i,
-    applyStrategies: o,
-    mergeMode: u = !0,
-    columnStrategies: c
-  } = r, m = a.map((v) => {
-    const p = { ...v };
-    if ("enumKey" in p && p.enumKey) {
-      const E = p.enumKey;
-      t[E] && (p.valueEnum = t[E]), delete p.enumKey;
+    scene: n,
+    applyStrategies: i,
+    mergeMode: o = !0,
+    columnStrategies: l
+  } = a, g = r.map((p) => {
+    const c = { ...p };
+    if ("enumKey" in c && c.enumKey) {
+      const y = c.enumKey;
+      t[y] && (c.valueEnum = t[y]), delete c.enumKey;
     }
-    return p;
-  }).map((v) => {
-    if (!o || o.length === 0)
-      return v;
-    const p = { ...v }, E = {
+    return c;
+  }).map((p) => {
+    if (!i || i.length === 0)
+      return p;
+    const c = { ...p }, y = {
       mode: "merge",
-      strategy: o
+      strategy: i
     };
-    return u ? p.strategys = [...v.strategys || [], E] : p.strategys = [E], p;
-  }).map((v) => {
-    if (!c || c.length === 0)
-      return v;
-    const p = c.find(
-      (J) => J.dataIndex === v.dataIndex
+    return o ? c.strategys = [...p.strategys || [], y] : c.strategys = [y], c;
+  }).map((p) => {
+    if (!l || l.length === 0)
+      return p;
+    const c = l.find(
+      (Y) => Y.dataIndex === p.dataIndex
     );
-    if (!p)
-      return v;
-    const E = { ...v }, w = {
+    if (!c)
+      return p;
+    const y = { ...p }, S = {
       mode: "merge",
-      strategy: p.strategies
+      strategy: c.strategies
     };
-    return (p.mergeMode !== void 0 ? p.mergeMode : !0) ? E.strategys = [...E.strategys || [], w] : E.strategys = [w], E;
+    return (c.mergeMode !== void 0 ? c.mergeMode : !0) ? y.strategys = [...y.strategys || [], S] : y.strategys = [S], y;
   });
-  return Dt(m, i);
-}, G = /* @__PURE__ */ new Map(), It = {
+  return Ht(g, n);
+}, ne = /* @__PURE__ */ new Map(), Ut = {
   proTable: "table",
   proForm: "form",
   proDescription: "description"
-}, Y = {
+}, U = {
   /**
    * 注册组件适配器
    * @param adapter 组件适配器
    */
-  register(r) {
-    G.set(r.name, r);
+  register(a) {
+    ne.set(a.name, a);
   },
   /**
    * 获取组件适配器
    * @param name 组件名称
    */
-  getAdapter(r) {
-    return G.get(r);
+  getAdapter(a) {
+    return ne.get(a);
   },
   /**
    * 转换 columns 为指定组件的格式
@@ -485,63 +711,219 @@ const Jt = (r = {}) => {
    * @param columns 原始 columns
    * @param options 配置选项
    */
-  transform(r, a, t) {
-    const i = this.getAdapter(r);
-    if (!i)
-      return console.warn(`Component adapter "${r}" not found, returning original columns`), a;
-    const { enums: o, scene: u, applyStrategies: c, mergeMode: g = !0, columnStrategies: l } = t || {}, m = u || i.scene || It[r], d = Ft({
-      columns: a,
-      enums: o,
-      scene: m,
-      applyStrategies: c,
-      mergeMode: g,
-      columnStrategies: l
+  transform(a, r, t) {
+    const n = this.getAdapter(a);
+    if (!n)
+      return console.warn(`Component adapter "${a}" not found, returning original columns`), r;
+    const { enums: i, scene: o, applyStrategies: l, mergeMode: m = !0, columnStrategies: u } = t || {}, g = o || n.scene || Ut[a], f = Bt({
+      columns: r,
+      enums: i,
+      scene: g,
+      applyStrategies: l,
+      mergeMode: m,
+      columnStrategies: u
     });
-    return i.transform(d);
+    return n.transform(f);
   },
   /**
    * 获取所有已注册的适配器名称
    */
   getAdapterNames() {
-    return Array.from(G.keys());
+    return Array.from(ne.keys());
   },
   /**
    * 清空所有适配器（主要用于测试）
    */
   clear() {
-    G.clear();
+    ne.clear();
   }
-}, kt = {
+}, qt = {
   name: "proTable",
   scene: "table",
-  transform: (r) => r.map((a) => {
-    const t = { ...a };
+  transform: (a) => a.map((r) => {
+    const t = { ...r };
     return "ellipsis" in t || (t.ellipsis = !0), "search" in t && t.search === !1 && (t.hideInSearch = !0, delete t.search), "hideInTable" in t && t.hideInTable && (t.hideInTable = !0), "defaultHidden" in t && t.defaultHidden && delete t.defaultHidden, t;
   })
-}, At = {
+}, Gt = {
   name: "proForm",
   scene: "form",
-  transform: (r) => r.filter((a) => !a.hideInForm).map((a) => {
-    const t = { ...a };
+  transform: (a) => a.filter((r) => !r.hideInForm).map((r) => {
+    const t = { ...r };
     if (delete t.hideInTable, delete t.ellipsis, delete t.copyable, delete t.sorter, delete t.search, delete t.hideInSearch, !t.name && t.dataIndex && (t.name = t.dataIndex), !t.width) {
-      const i = t.valueType || "text";
-      ["textarea"].includes(i) ? t.width = "xl" : ["dateRange", "dateTimeRange", "timeRange"].includes(i) ? t.width = "lg" : t.width = "md";
+      const n = t.valueType || "text";
+      ["textarea"].includes(n) ? t.width = "xl" : ["dateRange", "dateTimeRange", "timeRange"].includes(n) ? t.width = "lg" : t.width = "md";
     }
     return t;
   })
-}, Mt = {
+}, Kt = {
   name: "proDescription",
   scene: "description",
-  transform: (r) => r.filter((a) => !a.hideInDescriptions).map((a) => {
-    const t = { ...a };
+  transform: (a) => a.filter((r) => !r.hideInDescriptions).map((r) => {
+    const t = { ...r };
     if (delete t.hideInTable, delete t.sorter, delete t.filters, delete t.hideInForm, delete t.formItemProps, delete t.search, delete t.hideInSearch, delete t.fieldProps, !t.span) {
-      const i = t.valueType || "text";
-      ["textarea", "jsonCode", "code"].includes(i) ? t.span = 3 : t.span = 1;
+      const n = t.valueType || "text";
+      ["textarea", "jsonCode", "code"].includes(n) ? t.span = 3 : t.span = 1;
     }
     return t;
   })
-};
-var ae = { exports: {} }, N = {};
+}, B = {};
+class sr {
+  /**
+   * 注册自定义预设
+   * @param name 预设名称
+   * @param preset 预设函数
+   */
+  static register(r, t) {
+    B[r] && console.warn(`[Pro-Columns] Preset "${r}" already exists and will be overwritten.`), B[r] = t;
+  }
+  /**
+   * 获取预设
+   * @param name 预设名称
+   * @returns 预设函数
+   */
+  static get(r) {
+    return B[r];
+  }
+  /**
+   * 获取所有预设名称
+   * @returns 预设名称列表
+   */
+  static list() {
+    return Object.keys(B);
+  }
+  /**
+   * 清空所有预设（主要用于测试）
+   */
+  static clear() {
+    Object.keys(B).forEach((r) => {
+      delete B[r];
+    });
+  }
+  // ==================== 内置预设 ====================
+  /**
+   * 可搜索字段
+   * 包含：搜索、排序、占位符
+   */
+  static searchableField() {
+    return [de(), M(), te({ includeSearch: !0 })];
+  }
+  /**
+   * 必填字段
+   * 包含：必填、占位符
+   */
+  static requiredField() {
+    return [pe(), te()];
+  }
+  /**
+   * 金额字段
+   * 包含：金额格式化、宽度配置、排序
+   */
+  static moneyField(r) {
+    const { precision: t = 2 } = r || {};
+    return [
+      K({ type: "money", precision: t }),
+      V({ table: 120, form: "lg" }),
+      M(),
+      me()
+    ];
+  }
+  /**
+   * 日期字段
+   * 包含：日期格式化、排序、宽度配置
+   */
+  static dateField(r) {
+    const { format: t = "YYYY-MM-DD" } = r || {};
+    return [K({ type: "date", dateFormat: t }), M(), V({ table: 180, form: "md" })];
+  }
+  /**
+   * 日期时间字段
+   * 包含：日期时间格式化、排序、宽度配置
+   */
+  static dateTimeField() {
+    return [
+      K({ type: "date", dateFormat: "YYYY-MM-DD HH:mm:ss" }),
+      M(),
+      V({ table: 200, form: "lg" })
+    ];
+  }
+  /**
+   * 枚举字段
+   * 包含：枚举渲染、搜索、必填、占位符
+   */
+  static enumField(r) {
+    const { type: t = "badge" } = r || {};
+    return [Vt({ type: t }), de(), pe(), te()];
+  }
+  /**
+   * 只读字段
+   * 包含：禁用表单输入
+   */
+  static readonlyField() {
+    return [
+      {
+        fieldProps: { disabled: !0 },
+        editable: !1
+      }
+    ];
+  }
+  /**
+   * 图片字段
+   * 包含：图片预览、宽度配置
+   */
+  static imageField(r) {
+    const { width: t = 60, height: n = 60, maxCount: i = 5 } = r || {};
+    return [Wt({ width: t, height: n, maxCount: i }), V({ table: 100, form: "lg" })];
+  }
+  /**
+   * 链接字段
+   * 包含：链接跳转、宽度配置、复制
+   */
+  static linkField(r) {
+    const { target: t = "_blank" } = r || {};
+    return [At({ target: t }), me(), V({ table: 200 })];
+  }
+  /**
+   * 数字字段
+   * 包含：数字格式化、排序、宽度配置
+   */
+  static numberField(r) {
+    const { precision: t = 0 } = r || {};
+    return [K({ type: "number", precision: t }), M(), V({ table: 100, form: "md" })];
+  }
+  /**
+   * 百分比字段
+   * 包含：百分比格式化、排序、宽度配置
+   */
+  static percentField(r) {
+    const { precision: t = 2 } = r || {};
+    return [K({ type: "percent", precision: t }), M(), V({ table: 100, form: "md" })];
+  }
+  /**
+   * 可编辑字段（表格内编辑）
+   * 包含：可编辑配置、排序
+   */
+  static editableField(r) {
+    const { type: t = "text", onSave: n } = r || {};
+    return [
+      {
+        editable: () => ({
+          type: t,
+          onSave: n
+        })
+      },
+      M()
+    ];
+  }
+  /**
+   * 完整 CRUD 字段
+   * 包含：搜索、排序、必填、占位符、复制
+   * 适用于常规文本字段
+   */
+  static fullField() {
+    return [de(), M(), pe(), te({ includeSearch: !0 }), me()];
+  }
+}
+var ge = { exports: {} }, J = {};
 /**
  * @license React
  * react-jsx-runtime.production.min.js
@@ -551,21 +933,21 @@ var ae = { exports: {} }, N = {};
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
  */
-var ke;
-function Wt() {
-  if (ke) return N;
-  ke = 1;
-  var r = Me, a = Symbol.for("react.element"), t = Symbol.for("react.fragment"), i = Object.prototype.hasOwnProperty, o = r.__SECRET_INTERNALS_DO_NOT_USE_OR_YOU_WILL_BE_FIRED.ReactCurrentOwner, u = { key: !0, ref: !0, __self: !0, __source: !0 };
-  function c(g, l, m) {
-    var d, v = {}, p = null, E = null;
-    m !== void 0 && (p = "" + m), l.key !== void 0 && (p = "" + l.key), l.ref !== void 0 && (E = l.ref);
-    for (d in l) i.call(l, d) && !u.hasOwnProperty(d) && (v[d] = l[d]);
-    if (g && g.defaultProps) for (d in l = g.defaultProps, l) v[d] === void 0 && (v[d] = l[d]);
-    return { $$typeof: a, type: g, key: p, ref: E, props: v, _owner: o.current };
+var Be;
+function Jt() {
+  if (Be) return J;
+  Be = 1;
+  var a = D, r = Symbol.for("react.element"), t = Symbol.for("react.fragment"), n = Object.prototype.hasOwnProperty, i = a.__SECRET_INTERNALS_DO_NOT_USE_OR_YOU_WILL_BE_FIRED.ReactCurrentOwner, o = { key: !0, ref: !0, __self: !0, __source: !0 };
+  function l(m, u, g) {
+    var f, p = {}, c = null, y = null;
+    g !== void 0 && (c = "" + g), u.key !== void 0 && (c = "" + u.key), u.ref !== void 0 && (y = u.ref);
+    for (f in u) n.call(u, f) && !o.hasOwnProperty(f) && (p[f] = u[f]);
+    if (m && m.defaultProps) for (f in u = m.defaultProps, u) p[f] === void 0 && (p[f] = u[f]);
+    return { $$typeof: r, type: m, key: c, ref: y, props: p, _owner: i.current };
   }
-  return N.Fragment = t, N.jsx = c, N.jsxs = c, N;
+  return J.Fragment = t, J.jsx = l, J.jsxs = l, J;
 }
-var L = {};
+var z = {};
 /**
  * @license React
  * react-jsx-runtime.development.js
@@ -575,54 +957,54 @@ var L = {};
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
  */
-var Ae;
-function Yt() {
-  return Ae || (Ae = 1, process.env.NODE_ENV !== "production" && function() {
-    var r = Me, a = Symbol.for("react.element"), t = Symbol.for("react.portal"), i = Symbol.for("react.fragment"), o = Symbol.for("react.strict_mode"), u = Symbol.for("react.profiler"), c = Symbol.for("react.provider"), g = Symbol.for("react.context"), l = Symbol.for("react.forward_ref"), m = Symbol.for("react.suspense"), d = Symbol.for("react.suspense_list"), v = Symbol.for("react.memo"), p = Symbol.for("react.lazy"), E = Symbol.for("react.offscreen"), w = Symbol.iterator, se = "@@iterator";
-    function J(e) {
+var Ue;
+function zt() {
+  return Ue || (Ue = 1, process.env.NODE_ENV !== "production" && function() {
+    var a = D, r = Symbol.for("react.element"), t = Symbol.for("react.portal"), n = Symbol.for("react.fragment"), i = Symbol.for("react.strict_mode"), o = Symbol.for("react.profiler"), l = Symbol.for("react.provider"), m = Symbol.for("react.context"), u = Symbol.for("react.forward_ref"), g = Symbol.for("react.suspense"), f = Symbol.for("react.suspense_list"), p = Symbol.for("react.memo"), c = Symbol.for("react.lazy"), y = Symbol.for("react.offscreen"), S = Symbol.iterator, $ = "@@iterator";
+    function Y(e) {
       if (e === null || typeof e != "object")
         return null;
-      var n = w && e[w] || e[se];
-      return typeof n == "function" ? n : null;
+      var s = S && e[S] || e[$];
+      return typeof s == "function" ? s : null;
     }
-    var A = r.__SECRET_INTERNALS_DO_NOT_USE_OR_YOU_WILL_BE_FIRED;
+    var C = a.__SECRET_INTERNALS_DO_NOT_USE_OR_YOU_WILL_BE_FIRED;
     function _(e) {
       {
-        for (var n = arguments.length, s = new Array(n > 1 ? n - 1 : 0), f = 1; f < n; f++)
-          s[f - 1] = arguments[f];
-        Ye("error", e, s);
+        for (var s = arguments.length, d = new Array(s > 1 ? s - 1 : 0), h = 1; h < s; h++)
+          d[h - 1] = arguments[h];
+        N("error", e, d);
       }
     }
-    function Ye(e, n, s) {
+    function N(e, s, d) {
       {
-        var f = A.ReactDebugCurrentFrame, b = f.getStackAddendum();
-        b !== "" && (n += "%s", s = s.concat([b]));
-        var T = s.map(function(y) {
-          return String(y);
+        var h = C.ReactDebugCurrentFrame, R = h.getStackAddendum();
+        R !== "" && (s += "%s", d = d.concat([R]));
+        var x = d.map(function(b) {
+          return String(b);
         });
-        T.unshift("Warning: " + n), Function.prototype.apply.call(console[e], console, T);
+        x.unshift("Warning: " + s), Function.prototype.apply.call(console[e], console, x);
       }
     }
-    var $e = !1, Ve = !1, Ne = !1, Le = !1, Ue = !1, ue;
-    ue = Symbol.for("react.module.reference");
-    function Ke(e) {
-      return !!(typeof e == "string" || typeof e == "function" || e === i || e === u || Ue || e === o || e === m || e === d || Le || e === E || $e || Ve || Ne || typeof e == "object" && e !== null && (e.$$typeof === p || e.$$typeof === v || e.$$typeof === c || e.$$typeof === g || e.$$typeof === l || // This needs to include all possible module reference object
+    var Ge = !1, Ke = !1, Je = !1, ze = !1, Qe = !1, ve;
+    ve = Symbol.for("react.module.reference");
+    function Ze(e) {
+      return !!(typeof e == "string" || typeof e == "function" || e === n || e === o || Qe || e === i || e === g || e === f || ze || e === y || Ge || Ke || Je || typeof e == "object" && e !== null && (e.$$typeof === c || e.$$typeof === p || e.$$typeof === l || e.$$typeof === m || e.$$typeof === u || // This needs to include all possible module reference object
       // types supported by any Flight configuration anywhere since
       // we don't know which Flight build this will end up being used
       // with.
-      e.$$typeof === ue || e.getModuleId !== void 0));
+      e.$$typeof === ve || e.getModuleId !== void 0));
     }
-    function qe(e, n, s) {
-      var f = e.displayName;
-      if (f)
-        return f;
-      var b = n.displayName || n.name || "";
-      return b !== "" ? s + "(" + b + ")" : s;
+    function Xe(e, s, d) {
+      var h = e.displayName;
+      if (h)
+        return h;
+      var R = s.displayName || s.name || "";
+      return R !== "" ? d + "(" + R + ")" : d;
     }
-    function le(e) {
+    function be(e) {
       return e.displayName || "Context";
     }
-    function D(e) {
+    function k(e) {
       if (e == null)
         return null;
       if (typeof e.tag == "number" && _("Received an unexpected object in getComponentNameFromType(). This is likely a bug in React. Please file an issue."), typeof e == "function")
@@ -630,36 +1012,36 @@ function Yt() {
       if (typeof e == "string")
         return e;
       switch (e) {
-        case i:
+        case n:
           return "Fragment";
         case t:
           return "Portal";
-        case u:
-          return "Profiler";
         case o:
+          return "Profiler";
+        case i:
           return "StrictMode";
-        case m:
+        case g:
           return "Suspense";
-        case d:
+        case f:
           return "SuspenseList";
       }
       if (typeof e == "object")
         switch (e.$$typeof) {
-          case g:
-            var n = e;
-            return le(n) + ".Consumer";
-          case c:
+          case m:
             var s = e;
-            return le(s._context) + ".Provider";
+            return be(s) + ".Consumer";
           case l:
-            return qe(e, e.render, "ForwardRef");
-          case v:
-            var f = e.displayName || null;
-            return f !== null ? f : D(e.type) || "Memo";
-          case p: {
-            var b = e, T = b._payload, y = b._init;
+            var d = e;
+            return be(d._context) + ".Provider";
+          case u:
+            return Xe(e, e.render, "ForwardRef");
+          case p:
+            var h = e.displayName || null;
+            return h !== null ? h : k(e.type) || "Memo";
+          case c: {
+            var R = e, x = R._payload, b = R._init;
             try {
-              return D(y(T));
+              return k(b(x));
             } catch {
               return null;
             }
@@ -667,18 +1049,18 @@ function Yt() {
         }
       return null;
     }
-    var I = Object.assign, $ = 0, ce, fe, de, pe, me, ge, ve;
-    function he() {
+    var A = Object.assign, q = 0, Te, Re, xe, Ee, Pe, Se, _e;
+    function we() {
     }
-    he.__reactDisabledLog = !0;
-    function Be() {
+    we.__reactDisabledLog = !0;
+    function et() {
       {
-        if ($ === 0) {
-          ce = console.log, fe = console.info, de = console.warn, pe = console.error, me = console.group, ge = console.groupCollapsed, ve = console.groupEnd;
+        if (q === 0) {
+          Te = console.log, Re = console.info, xe = console.warn, Ee = console.error, Pe = console.group, Se = console.groupCollapsed, _e = console.groupEnd;
           var e = {
             configurable: !0,
             enumerable: !0,
-            value: he,
+            value: we,
             writable: !0
           };
           Object.defineProperties(console, {
@@ -691,332 +1073,332 @@ function Yt() {
             groupEnd: e
           });
         }
-        $++;
+        q++;
       }
     }
-    function He() {
+    function tt() {
       {
-        if ($--, $ === 0) {
+        if (q--, q === 0) {
           var e = {
             configurable: !0,
             enumerable: !0,
             writable: !0
           };
           Object.defineProperties(console, {
-            log: I({}, e, {
-              value: ce
+            log: A({}, e, {
+              value: Te
             }),
-            info: I({}, e, {
-              value: fe
+            info: A({}, e, {
+              value: Re
             }),
-            warn: I({}, e, {
-              value: de
+            warn: A({}, e, {
+              value: xe
             }),
-            error: I({}, e, {
-              value: pe
+            error: A({}, e, {
+              value: Ee
             }),
-            group: I({}, e, {
-              value: me
+            group: A({}, e, {
+              value: Pe
             }),
-            groupCollapsed: I({}, e, {
-              value: ge
+            groupCollapsed: A({}, e, {
+              value: Se
             }),
-            groupEnd: I({}, e, {
-              value: ve
+            groupEnd: A({}, e, {
+              value: _e
             })
           });
         }
-        $ < 0 && _("disabledDepth fell below zero. This is a bug in React. Please file an issue.");
+        q < 0 && _("disabledDepth fell below zero. This is a bug in React. Please file an issue.");
       }
     }
-    var z = A.ReactCurrentDispatcher, X;
-    function U(e, n, s) {
+    var ae = C.ReactCurrentDispatcher, ie;
+    function Q(e, s, d) {
       {
-        if (X === void 0)
+        if (ie === void 0)
           try {
             throw Error();
-          } catch (b) {
-            var f = b.stack.trim().match(/\n( *(at )?)/);
-            X = f && f[1] || "";
+          } catch (R) {
+            var h = R.stack.trim().match(/\n( *(at )?)/);
+            ie = h && h[1] || "";
           }
         return `
-` + X + e;
+` + ie + e;
       }
     }
-    var Z = !1, K;
+    var se = !1, Z;
     {
-      var Ge = typeof WeakMap == "function" ? WeakMap : Map;
-      K = new Ge();
+      var rt = typeof WeakMap == "function" ? WeakMap : Map;
+      Z = new rt();
     }
-    function ye(e, n) {
-      if (!e || Z)
+    function Ce(e, s) {
+      if (!e || se)
         return "";
       {
-        var s = K.get(e);
-        if (s !== void 0)
-          return s;
+        var d = Z.get(e);
+        if (d !== void 0)
+          return d;
       }
-      var f;
-      Z = !0;
-      var b = Error.prepareStackTrace;
+      var h;
+      se = !0;
+      var R = Error.prepareStackTrace;
       Error.prepareStackTrace = void 0;
-      var T;
-      T = z.current, z.current = null, Be();
+      var x;
+      x = ae.current, ae.current = null, et();
       try {
-        if (n) {
-          var y = function() {
+        if (s) {
+          var b = function() {
             throw Error();
           };
-          if (Object.defineProperty(y.prototype, "props", {
+          if (Object.defineProperty(b.prototype, "props", {
             set: function() {
               throw Error();
             }
           }), typeof Reflect == "object" && Reflect.construct) {
             try {
-              Reflect.construct(y, []);
-            } catch (C) {
-              f = C;
+              Reflect.construct(b, []);
+            } catch (j) {
+              h = j;
             }
-            Reflect.construct(e, [], y);
+            Reflect.construct(e, [], b);
           } else {
             try {
-              y.call();
-            } catch (C) {
-              f = C;
+              b.call();
+            } catch (j) {
+              h = j;
             }
-            e.call(y.prototype);
+            e.call(b.prototype);
           }
         } else {
           try {
             throw Error();
-          } catch (C) {
-            f = C;
+          } catch (j) {
+            h = j;
           }
           e();
         }
-      } catch (C) {
-        if (C && f && typeof C.stack == "string") {
-          for (var h = C.stack.split(`
-`), P = f.stack.split(`
-`), x = h.length - 1, S = P.length - 1; x >= 1 && S >= 0 && h[x] !== P[S]; )
-            S--;
-          for (; x >= 1 && S >= 0; x--, S--)
-            if (h[x] !== P[S]) {
-              if (x !== 1 || S !== 1)
+      } catch (j) {
+        if (j && h && typeof j.stack == "string") {
+          for (var v = j.stack.split(`
+`), F = h.stack.split(`
+`), E = v.length - 1, w = F.length - 1; E >= 1 && w >= 0 && v[E] !== F[w]; )
+            w--;
+          for (; E >= 1 && w >= 0; E--, w--)
+            if (v[E] !== F[w]) {
+              if (E !== 1 || w !== 1)
                 do
-                  if (x--, S--, S < 0 || h[x] !== P[S]) {
-                    var j = `
-` + h[x].replace(" at new ", " at ");
-                    return e.displayName && j.includes("<anonymous>") && (j = j.replace("<anonymous>", e.displayName)), typeof e == "function" && K.set(e, j), j;
+                  if (E--, w--, w < 0 || v[E] !== F[w]) {
+                    var O = `
+` + v[E].replace(" at new ", " at ");
+                    return e.displayName && O.includes("<anonymous>") && (O = O.replace("<anonymous>", e.displayName)), typeof e == "function" && Z.set(e, O), O;
                   }
-                while (x >= 1 && S >= 0);
+                while (E >= 1 && w >= 0);
               break;
             }
         }
       } finally {
-        Z = !1, z.current = T, He(), Error.prepareStackTrace = b;
+        se = !1, ae.current = x, tt(), Error.prepareStackTrace = R;
       }
-      var W = e ? e.displayName || e.name : "", k = W ? U(W) : "";
-      return typeof e == "function" && K.set(e, k), k;
+      var H = e ? e.displayName || e.name : "", W = H ? Q(H) : "";
+      return typeof e == "function" && Z.set(e, W), W;
     }
-    function Je(e, n, s) {
-      return ye(e, !1);
+    function nt(e, s, d) {
+      return Ce(e, !1);
     }
-    function ze(e) {
-      var n = e.prototype;
-      return !!(n && n.isReactComponent);
+    function at(e) {
+      var s = e.prototype;
+      return !!(s && s.isReactComponent);
     }
-    function q(e, n, s) {
+    function X(e, s, d) {
       if (e == null)
         return "";
       if (typeof e == "function")
-        return ye(e, ze(e));
+        return Ce(e, at(e));
       if (typeof e == "string")
-        return U(e);
+        return Q(e);
       switch (e) {
-        case m:
-          return U("Suspense");
-        case d:
-          return U("SuspenseList");
+        case g:
+          return Q("Suspense");
+        case f:
+          return Q("SuspenseList");
       }
       if (typeof e == "object")
         switch (e.$$typeof) {
-          case l:
-            return Je(e.render);
-          case v:
-            return q(e.type, n, s);
-          case p: {
-            var f = e, b = f._payload, T = f._init;
+          case u:
+            return nt(e.render);
+          case p:
+            return X(e.type, s, d);
+          case c: {
+            var h = e, R = h._payload, x = h._init;
             try {
-              return q(T(b), n, s);
+              return X(x(R), s, d);
             } catch {
             }
           }
         }
       return "";
     }
-    var V = Object.prototype.hasOwnProperty, be = {}, Te = A.ReactDebugCurrentFrame;
-    function B(e) {
+    var G = Object.prototype.hasOwnProperty, Ie = {}, Fe = C.ReactDebugCurrentFrame;
+    function ee(e) {
       if (e) {
-        var n = e._owner, s = q(e.type, e._source, n ? n.type : null);
-        Te.setExtraStackFrame(s);
+        var s = e._owner, d = X(e.type, e._source, s ? s.type : null);
+        Fe.setExtraStackFrame(d);
       } else
-        Te.setExtraStackFrame(null);
+        Fe.setExtraStackFrame(null);
     }
-    function Xe(e, n, s, f, b) {
+    function it(e, s, d, h, R) {
       {
-        var T = Function.call.bind(V);
-        for (var y in e)
-          if (T(e, y)) {
-            var h = void 0;
+        var x = Function.call.bind(G);
+        for (var b in e)
+          if (x(e, b)) {
+            var v = void 0;
             try {
-              if (typeof e[y] != "function") {
-                var P = Error((f || "React class") + ": " + s + " type `" + y + "` is invalid; it must be a function, usually from the `prop-types` package, but received `" + typeof e[y] + "`.This often happens because of typos such as `PropTypes.function` instead of `PropTypes.func`.");
-                throw P.name = "Invariant Violation", P;
+              if (typeof e[b] != "function") {
+                var F = Error((h || "React class") + ": " + d + " type `" + b + "` is invalid; it must be a function, usually from the `prop-types` package, but received `" + typeof e[b] + "`.This often happens because of typos such as `PropTypes.function` instead of `PropTypes.func`.");
+                throw F.name = "Invariant Violation", F;
               }
-              h = e[y](n, y, f, s, null, "SECRET_DO_NOT_PASS_THIS_OR_YOU_WILL_BE_FIRED");
-            } catch (x) {
-              h = x;
+              v = e[b](s, b, h, d, null, "SECRET_DO_NOT_PASS_THIS_OR_YOU_WILL_BE_FIRED");
+            } catch (E) {
+              v = E;
             }
-            h && !(h instanceof Error) && (B(b), _("%s: type specification of %s `%s` is invalid; the type checker function must return `null` or an `Error` but returned a %s. You may have forgotten to pass an argument to the type checker creator (arrayOf, instanceOf, objectOf, oneOf, oneOfType, and shape all require an argument).", f || "React class", s, y, typeof h), B(null)), h instanceof Error && !(h.message in be) && (be[h.message] = !0, B(b), _("Failed %s type: %s", s, h.message), B(null));
+            v && !(v instanceof Error) && (ee(R), _("%s: type specification of %s `%s` is invalid; the type checker function must return `null` or an `Error` but returned a %s. You may have forgotten to pass an argument to the type checker creator (arrayOf, instanceOf, objectOf, oneOf, oneOfType, and shape all require an argument).", h || "React class", d, b, typeof v), ee(null)), v instanceof Error && !(v.message in Ie) && (Ie[v.message] = !0, ee(R), _("Failed %s type: %s", d, v.message), ee(null));
           }
       }
     }
-    var Ze = Array.isArray;
-    function Q(e) {
-      return Ze(e);
+    var st = Array.isArray;
+    function oe(e) {
+      return st(e);
     }
-    function Qe(e) {
+    function ot(e) {
       {
-        var n = typeof Symbol == "function" && Symbol.toStringTag, s = n && e[Symbol.toStringTag] || e.constructor.name || "Object";
-        return s;
+        var s = typeof Symbol == "function" && Symbol.toStringTag, d = s && e[Symbol.toStringTag] || e.constructor.name || "Object";
+        return d;
       }
     }
-    function et(e) {
+    function ut(e) {
       try {
-        return Re(e), !1;
+        return je(e), !1;
       } catch {
         return !0;
       }
     }
-    function Re(e) {
+    function je(e) {
       return "" + e;
     }
-    function Ee(e) {
-      if (et(e))
-        return _("The provided key is an unsupported type %s. This value must be coerced to a string before before using it here.", Qe(e)), Re(e);
+    function Oe(e) {
+      if (ut(e))
+        return _("The provided key is an unsupported type %s. This value must be coerced to a string before before using it here.", ot(e)), je(e);
     }
-    var xe = A.ReactCurrentOwner, tt = {
+    var De = C.ReactCurrentOwner, lt = {
       key: !0,
       ref: !0,
       __self: !0,
       __source: !0
-    }, Se, _e;
-    function rt(e) {
-      if (V.call(e, "ref")) {
-        var n = Object.getOwnPropertyDescriptor(e, "ref").get;
-        if (n && n.isReactWarning)
+    }, ke, Me;
+    function ct(e) {
+      if (G.call(e, "ref")) {
+        var s = Object.getOwnPropertyDescriptor(e, "ref").get;
+        if (s && s.isReactWarning)
           return !1;
       }
       return e.ref !== void 0;
     }
-    function nt(e) {
-      if (V.call(e, "key")) {
-        var n = Object.getOwnPropertyDescriptor(e, "key").get;
-        if (n && n.isReactWarning)
+    function ft(e) {
+      if (G.call(e, "key")) {
+        var s = Object.getOwnPropertyDescriptor(e, "key").get;
+        if (s && s.isReactWarning)
           return !1;
       }
       return e.key !== void 0;
     }
-    function at(e, n) {
-      typeof e.ref == "string" && xe.current;
+    function dt(e, s) {
+      typeof e.ref == "string" && De.current;
     }
-    function it(e, n) {
+    function pt(e, s) {
       {
-        var s = function() {
-          Se || (Se = !0, _("%s: `key` is not a prop. Trying to access it will result in `undefined` being returned. If you need to access the same value within the child component, you should pass it as a different prop. (https://reactjs.org/link/special-props)", n));
+        var d = function() {
+          ke || (ke = !0, _("%s: `key` is not a prop. Trying to access it will result in `undefined` being returned. If you need to access the same value within the child component, you should pass it as a different prop. (https://reactjs.org/link/special-props)", s));
         };
-        s.isReactWarning = !0, Object.defineProperty(e, "key", {
-          get: s,
+        d.isReactWarning = !0, Object.defineProperty(e, "key", {
+          get: d,
           configurable: !0
         });
       }
     }
-    function ot(e, n) {
+    function mt(e, s) {
       {
-        var s = function() {
-          _e || (_e = !0, _("%s: `ref` is not a prop. Trying to access it will result in `undefined` being returned. If you need to access the same value within the child component, you should pass it as a different prop. (https://reactjs.org/link/special-props)", n));
+        var d = function() {
+          Me || (Me = !0, _("%s: `ref` is not a prop. Trying to access it will result in `undefined` being returned. If you need to access the same value within the child component, you should pass it as a different prop. (https://reactjs.org/link/special-props)", s));
         };
-        s.isReactWarning = !0, Object.defineProperty(e, "ref", {
-          get: s,
+        d.isReactWarning = !0, Object.defineProperty(e, "ref", {
+          get: d,
           configurable: !0
         });
       }
     }
-    var st = function(e, n, s, f, b, T, y) {
-      var h = {
+    var gt = function(e, s, d, h, R, x, b) {
+      var v = {
         // This tag allows us to uniquely identify this as a React Element
-        $$typeof: a,
+        $$typeof: r,
         // Built-in properties that belong on the element
         type: e,
-        key: n,
-        ref: s,
-        props: y,
+        key: s,
+        ref: d,
+        props: b,
         // Record the component responsible for creating this element.
-        _owner: T
+        _owner: x
       };
-      return h._store = {}, Object.defineProperty(h._store, "validated", {
+      return v._store = {}, Object.defineProperty(v._store, "validated", {
         configurable: !1,
         enumerable: !1,
         writable: !0,
         value: !1
-      }), Object.defineProperty(h, "_self", {
+      }), Object.defineProperty(v, "_self", {
         configurable: !1,
         enumerable: !1,
         writable: !1,
-        value: f
-      }), Object.defineProperty(h, "_source", {
+        value: h
+      }), Object.defineProperty(v, "_source", {
         configurable: !1,
         enumerable: !1,
         writable: !1,
-        value: b
-      }), Object.freeze && (Object.freeze(h.props), Object.freeze(h)), h;
+        value: R
+      }), Object.freeze && (Object.freeze(v.props), Object.freeze(v)), v;
     };
-    function ut(e, n, s, f, b) {
+    function ht(e, s, d, h, R) {
       {
-        var T, y = {}, h = null, P = null;
-        s !== void 0 && (Ee(s), h = "" + s), nt(n) && (Ee(n.key), h = "" + n.key), rt(n) && (P = n.ref, at(n, b));
-        for (T in n)
-          V.call(n, T) && !tt.hasOwnProperty(T) && (y[T] = n[T]);
+        var x, b = {}, v = null, F = null;
+        d !== void 0 && (Oe(d), v = "" + d), ft(s) && (Oe(s.key), v = "" + s.key), ct(s) && (F = s.ref, dt(s, R));
+        for (x in s)
+          G.call(s, x) && !lt.hasOwnProperty(x) && (b[x] = s[x]);
         if (e && e.defaultProps) {
-          var x = e.defaultProps;
-          for (T in x)
-            y[T] === void 0 && (y[T] = x[T]);
+          var E = e.defaultProps;
+          for (x in E)
+            b[x] === void 0 && (b[x] = E[x]);
         }
-        if (h || P) {
-          var S = typeof e == "function" ? e.displayName || e.name || "Unknown" : e;
-          h && it(y, S), P && ot(y, S);
+        if (v || F) {
+          var w = typeof e == "function" ? e.displayName || e.name || "Unknown" : e;
+          v && pt(b, w), F && mt(b, w);
         }
-        return st(e, h, P, b, f, xe.current, y);
+        return gt(e, v, F, R, h, De.current, b);
       }
     }
-    var ee = A.ReactCurrentOwner, Pe = A.ReactDebugCurrentFrame;
-    function M(e) {
+    var ue = C.ReactCurrentOwner, Ye = C.ReactDebugCurrentFrame;
+    function L(e) {
       if (e) {
-        var n = e._owner, s = q(e.type, e._source, n ? n.type : null);
-        Pe.setExtraStackFrame(s);
+        var s = e._owner, d = X(e.type, e._source, s ? s.type : null);
+        Ye.setExtraStackFrame(d);
       } else
-        Pe.setExtraStackFrame(null);
+        Ye.setExtraStackFrame(null);
     }
-    var te;
-    te = !1;
-    function re(e) {
-      return typeof e == "object" && e !== null && e.$$typeof === a;
+    var le;
+    le = !1;
+    function ce(e) {
+      return typeof e == "object" && e !== null && e.$$typeof === r;
     }
-    function we() {
+    function Ae() {
       {
-        if (ee.current) {
-          var e = D(ee.current.type);
+        if (ue.current) {
+          var e = k(ue.current.type);
           if (e)
             return `
 
@@ -1025,237 +1407,246 @@ Check the render method of \`` + e + "`.";
         return "";
       }
     }
-    function lt(e) {
+    function yt(e) {
       return "";
     }
-    var Ce = {};
-    function ct(e) {
+    var We = {};
+    function vt(e) {
       {
-        var n = we();
-        if (!n) {
-          var s = typeof e == "string" ? e : e.displayName || e.name;
-          s && (n = `
+        var s = Ae();
+        if (!s) {
+          var d = typeof e == "string" ? e : e.displayName || e.name;
+          d && (s = `
 
-Check the top-level render call using <` + s + ">.");
+Check the top-level render call using <` + d + ">.");
         }
-        return n;
+        return s;
       }
     }
-    function Oe(e, n) {
+    function Ve(e, s) {
       {
         if (!e._store || e._store.validated || e.key != null)
           return;
         e._store.validated = !0;
-        var s = ct(n);
-        if (Ce[s])
+        var d = vt(s);
+        if (We[d])
           return;
-        Ce[s] = !0;
-        var f = "";
-        e && e._owner && e._owner !== ee.current && (f = " It was passed a child from " + D(e._owner.type) + "."), M(e), _('Each child in a list should have a unique "key" prop.%s%s See https://reactjs.org/link/warning-keys for more information.', s, f), M(null);
+        We[d] = !0;
+        var h = "";
+        e && e._owner && e._owner !== ue.current && (h = " It was passed a child from " + k(e._owner.type) + "."), L(e), _('Each child in a list should have a unique "key" prop.%s%s See https://reactjs.org/link/warning-keys for more information.', d, h), L(null);
       }
     }
-    function je(e, n) {
+    function $e(e, s) {
       {
         if (typeof e != "object")
           return;
-        if (Q(e))
-          for (var s = 0; s < e.length; s++) {
-            var f = e[s];
-            re(f) && Oe(f, n);
+        if (oe(e))
+          for (var d = 0; d < e.length; d++) {
+            var h = e[d];
+            ce(h) && Ve(h, s);
           }
-        else if (re(e))
+        else if (ce(e))
           e._store && (e._store.validated = !0);
         else if (e) {
-          var b = J(e);
-          if (typeof b == "function" && b !== e.entries)
-            for (var T = b.call(e), y; !(y = T.next()).done; )
-              re(y.value) && Oe(y.value, n);
+          var R = Y(e);
+          if (typeof R == "function" && R !== e.entries)
+            for (var x = R.call(e), b; !(b = x.next()).done; )
+              ce(b.value) && Ve(b.value, s);
         }
       }
     }
-    function ft(e) {
+    function bt(e) {
       {
-        var n = e.type;
-        if (n == null || typeof n == "string")
+        var s = e.type;
+        if (s == null || typeof s == "string")
           return;
-        var s;
-        if (typeof n == "function")
-          s = n.propTypes;
-        else if (typeof n == "object" && (n.$$typeof === l || // Note: Memo only checks outer props here.
+        var d;
+        if (typeof s == "function")
+          d = s.propTypes;
+        else if (typeof s == "object" && (s.$$typeof === u || // Note: Memo only checks outer props here.
         // Inner props are checked in the reconciler.
-        n.$$typeof === v))
-          s = n.propTypes;
+        s.$$typeof === p))
+          d = s.propTypes;
         else
           return;
-        if (s) {
-          var f = D(n);
-          Xe(s, e.props, "prop", f, e);
-        } else if (n.PropTypes !== void 0 && !te) {
-          te = !0;
-          var b = D(n);
-          _("Component %s declared `PropTypes` instead of `propTypes`. Did you misspell the property assignment?", b || "Unknown");
+        if (d) {
+          var h = k(s);
+          it(d, e.props, "prop", h, e);
+        } else if (s.PropTypes !== void 0 && !le) {
+          le = !0;
+          var R = k(s);
+          _("Component %s declared `PropTypes` instead of `propTypes`. Did you misspell the property assignment?", R || "Unknown");
         }
-        typeof n.getDefaultProps == "function" && !n.getDefaultProps.isReactClassApproved && _("getDefaultProps is only used on classic React.createClass definitions. Use a static property named `defaultProps` instead.");
+        typeof s.getDefaultProps == "function" && !s.getDefaultProps.isReactClassApproved && _("getDefaultProps is only used on classic React.createClass definitions. Use a static property named `defaultProps` instead.");
       }
     }
-    function dt(e) {
+    function Tt(e) {
       {
-        for (var n = Object.keys(e.props), s = 0; s < n.length; s++) {
-          var f = n[s];
-          if (f !== "children" && f !== "key") {
-            M(e), _("Invalid prop `%s` supplied to `React.Fragment`. React.Fragment can only have `key` and `children` props.", f), M(null);
+        for (var s = Object.keys(e.props), d = 0; d < s.length; d++) {
+          var h = s[d];
+          if (h !== "children" && h !== "key") {
+            L(e), _("Invalid prop `%s` supplied to `React.Fragment`. React.Fragment can only have `key` and `children` props.", h), L(null);
             break;
           }
         }
-        e.ref !== null && (M(e), _("Invalid attribute `ref` supplied to `React.Fragment`."), M(null));
+        e.ref !== null && (L(e), _("Invalid attribute `ref` supplied to `React.Fragment`."), L(null));
       }
     }
-    var De = {};
-    function Fe(e, n, s, f, b, T) {
+    var Ne = {};
+    function Le(e, s, d, h, R, x) {
       {
-        var y = Ke(e);
-        if (!y) {
-          var h = "";
-          (e === void 0 || typeof e == "object" && e !== null && Object.keys(e).length === 0) && (h += " You likely forgot to export your component from the file it's defined in, or you might have mixed up default and named imports.");
-          var P = lt();
-          P ? h += P : h += we();
-          var x;
-          e === null ? x = "null" : Q(e) ? x = "array" : e !== void 0 && e.$$typeof === a ? (x = "<" + (D(e.type) || "Unknown") + " />", h = " Did you accidentally export a JSX literal instead of a component?") : x = typeof e, _("React.jsx: type is invalid -- expected a string (for built-in components) or a class/function (for composite components) but got: %s.%s", x, h);
+        var b = Ze(e);
+        if (!b) {
+          var v = "";
+          (e === void 0 || typeof e == "object" && e !== null && Object.keys(e).length === 0) && (v += " You likely forgot to export your component from the file it's defined in, or you might have mixed up default and named imports.");
+          var F = yt();
+          F ? v += F : v += Ae();
+          var E;
+          e === null ? E = "null" : oe(e) ? E = "array" : e !== void 0 && e.$$typeof === r ? (E = "<" + (k(e.type) || "Unknown") + " />", v = " Did you accidentally export a JSX literal instead of a component?") : E = typeof e, _("React.jsx: type is invalid -- expected a string (for built-in components) or a class/function (for composite components) but got: %s.%s", E, v);
         }
-        var S = ut(e, n, s, b, T);
-        if (S == null)
-          return S;
-        if (y) {
-          var j = n.children;
-          if (j !== void 0)
-            if (f)
-              if (Q(j)) {
-                for (var W = 0; W < j.length; W++)
-                  je(j[W], e);
-                Object.freeze && Object.freeze(j);
+        var w = ht(e, s, d, R, x);
+        if (w == null)
+          return w;
+        if (b) {
+          var O = s.children;
+          if (O !== void 0)
+            if (h)
+              if (oe(O)) {
+                for (var H = 0; H < O.length; H++)
+                  $e(O[H], e);
+                Object.freeze && Object.freeze(O);
               } else
                 _("React.jsx: Static children should always be an array. You are likely explicitly calling React.jsxs or React.jsxDEV. Use the Babel transform instead.");
             else
-              je(j, e);
+              $e(O, e);
         }
-        if (V.call(n, "key")) {
-          var k = D(e), C = Object.keys(n).filter(function(yt) {
-            return yt !== "key";
-          }), ne = C.length > 0 ? "{key: someKey, " + C.join(": ..., ") + ": ...}" : "{key: someKey}";
-          if (!De[k + ne]) {
-            var ht = C.length > 0 ? "{" + C.join(": ..., ") + ": ...}" : "{}";
+        if (G.call(s, "key")) {
+          var W = k(e), j = Object.keys(s).filter(function(_t) {
+            return _t !== "key";
+          }), fe = j.length > 0 ? "{key: someKey, " + j.join(": ..., ") + ": ...}" : "{key: someKey}";
+          if (!Ne[W + fe]) {
+            var St = j.length > 0 ? "{" + j.join(": ..., ") + ": ...}" : "{}";
             _(`A props object containing a "key" prop is being spread into JSX:
   let props = %s;
   <%s {...props} />
 React keys must be passed directly to JSX without using spread:
   let props = %s;
-  <%s key={someKey} {...props} />`, ne, k, ht, k), De[k + ne] = !0;
+  <%s key={someKey} {...props} />`, fe, W, St, W), Ne[W + fe] = !0;
           }
         }
-        return e === i ? dt(S) : ft(S), S;
+        return e === n ? Tt(w) : bt(w), w;
       }
     }
-    function pt(e, n, s) {
-      return Fe(e, n, s, !0);
+    function Rt(e, s, d) {
+      return Le(e, s, d, !0);
     }
-    function mt(e, n, s) {
-      return Fe(e, n, s, !1);
+    function xt(e, s, d) {
+      return Le(e, s, d, !1);
     }
-    var gt = mt, vt = pt;
-    L.Fragment = i, L.jsx = gt, L.jsxs = vt;
-  }()), L;
+    var Et = xt, Pt = Rt;
+    z.Fragment = n, z.jsx = Et, z.jsxs = Pt;
+  }()), z;
 }
-process.env.NODE_ENV === "production" ? ae.exports = Wt() : ae.exports = Yt();
-var oe = ae.exports;
-function zt(r) {
+process.env.NODE_ENV === "production" ? ge.exports = Jt() : ge.exports = zt();
+var ye = ge.exports;
+function or(a) {
   const {
-    columns: a,
+    columns: r,
     enums: t,
-    applyStrategies: i,
-    mergeMode: o,
-    columnStrategies: u,
-    ...c
-  } = r;
-  return /* @__PURE__ */ oe.jsx(
-    bt,
+    applyStrategies: n,
+    mergeMode: i,
+    columnStrategies: o,
+    ...l
+  } = a;
+  return /* @__PURE__ */ ye.jsx(
+    wt,
     {
-      columns: Y.transform("proTable", a, {
+      columns: U.transform("proTable", r, {
         enums: t,
-        applyStrategies: i,
-        mergeMode: o,
-        columnStrategies: u
+        applyStrategies: n,
+        mergeMode: i,
+        columnStrategies: o
       }),
-      ...c
+      ...l
     }
   );
 }
-function Xt(r) {
+function ur(a) {
   const {
-    columns: a,
+    columns: r,
     enums: t,
-    applyStrategies: i,
-    mergeMode: o,
-    columnStrategies: u,
-    ...c
-  } = r;
-  return /* @__PURE__ */ oe.jsx(
-    Tt,
+    applyStrategies: n,
+    mergeMode: i,
+    columnStrategies: o,
+    ...l
+  } = a;
+  return /* @__PURE__ */ ye.jsx(
+    Ct,
     {
-      columns: Y.transform("proForm", a, {
+      columns: U.transform("proForm", r, {
         enums: t,
-        applyStrategies: i,
-        mergeMode: o,
-        columnStrategies: u
+        applyStrategies: n,
+        mergeMode: i,
+        columnStrategies: o
       }),
-      ...c
+      ...l
     }
   );
 }
-function Zt(r) {
+function lr(a) {
   const {
-    columns: a,
+    columns: r,
     enums: t,
-    applyStrategies: i,
-    mergeMode: o,
-    columnStrategies: u,
-    ...c
-  } = r;
-  return /* @__PURE__ */ oe.jsx(
-    Rt,
+    applyStrategies: n,
+    mergeMode: i,
+    columnStrategies: o,
+    ...l
+  } = a;
+  return /* @__PURE__ */ ye.jsx(
+    It,
     {
-      columns: Y.transform("proDescription", a, {
+      columns: U.transform("proDescription", r, {
         enums: t,
-        applyStrategies: i,
-        mergeMode: o,
-        columnStrategies: u
+        applyStrategies: n,
+        mergeMode: i,
+        columnStrategies: o
       }),
-      ...c
+      ...l
     }
   );
 }
-Y.register(kt);
-Y.register(At);
-Y.register(Mt);
+U.register(qt);
+U.register(Gt);
+U.register(Kt);
 export {
-  Ft as Columns,
-  Y as Component,
-  Gt as DefaultValue,
-  Bt as Format,
-  qt as Placeholder,
-  Zt as ProColumnsDescription,
-  Xt as ProColumnsForm,
-  zt as ProColumnsTable,
-  Kt as Required,
-  Lt as Search,
-  Ut as Sort,
-  Ht as Tooltip,
-  Jt as Width,
-  F as createStrategy,
-  We as deepMerge,
-  Ie as generatePlaceholder,
-  R as getField,
-  Et as getFieldType,
-  O as hasField,
-  Nt as setField
+  Bt as Columns,
+  U as Component,
+  me as Copy,
+  tr as DefaultValue,
+  ir as Editable,
+  Vt as Enum,
+  K as Format,
+  Wt as Image,
+  At as Link,
+  nr as Permission,
+  te as Placeholder,
+  sr as Presets,
+  lr as ProColumnsDescription,
+  ur as ProColumnsForm,
+  or as ProColumnsTable,
+  pe as Required,
+  de as Search,
+  M as Sort,
+  er as Tooltip,
+  ar as Transform,
+  rr as Validation,
+  V as Width,
+  I as createStrategy,
+  qe as deepMerge,
+  He as generatePlaceholder,
+  T as getField,
+  Ft as getFieldType,
+  P as hasField,
+  Xt as setField
 };
 //# sourceMappingURL=pro-columns.mjs.map
