@@ -4,13 +4,14 @@
 
 ## ✨ 特性
 
-- 🎯 **策略系统**：内置 16 种常用策略，覆盖常见业务场景，支持自定义扩展
-- 📦 **预设系统**：提供 12+ 开箱即用的策略预设组合，快速开发
+- 🎯 **策略系统**：内置 20 种常用策略，覆盖常见业务场景，支持自定义扩展
+- 📦 **预设系统**：提供 15+ 开箱即用的策略预设组合，快速开发
 - 🔄 **统一数据体系**：一套 columns 配置，自动适配多种组件（ProTable、ProForm、ProDescription）
 - 🎨 **场景化配置**：支持为不同场景（table/form/description）提供差异化配置
 - 🛠️ **高度可扩展**：支持自定义策略，灵活的策略模式（merge/replace）
 - 📦 **完整 TypeScript 支持**：完善的类型定义，泛型支持，开发体验友好
 - 🚀 **开箱即用**：提供封装组件，零配置快速上手
+- ⚡ **性能优化**：内置策略缓存机制，O(n) 遍历优化，大数据场景高效
 
 ## 📦 安装
 
@@ -165,11 +166,26 @@ const descColumns = Component.transform('proDescription', columns, {
 | **Permission** | 权限控制（隐藏/禁用） | 所有场景 |
 | **Transform** | 数据转换（输入/输出/显示） | 所有场景 |
 | **Editable** | 可编辑单元格 | ProTable |
+| **Conditional** | 条件渲染（动态显示/隐藏/禁用） | 所有场景 |
+| **Filter** | 高级筛选（自动生成筛选项） | ProTable |
+| **Aggregation** | 聚合统计（求和/平均/计数等） | ProTable |
+| **Export** | 导出配置（数据转换、格式化、排序） | 导出场景 |
 
 #### 策略使用示例
 
 ```tsx
-import { Search, Sort, Required, Placeholder, Format, Width } from 'pro-columns/strategy'
+import {
+  Search,
+  Sort,
+  Required,
+  Placeholder,
+  Format,
+  Width,
+  Filter,
+  Aggregation,
+  Export,
+  Conditional
+} from 'pro-columns/strategy'
 
 const columns = [
   {
@@ -181,6 +197,26 @@ const columns = [
       strategy: [
         Format({ type: 'money', precision: 2 }), // 格式化为金额
         Width({ table: 120, form: 'lg' }), // 不同场景不同宽度
+        Aggregation({ type: 'sum', precision: 2 }), // 求和统计
+        Export({ exportFormatter: (v) => `¥${v}` }), // 导出格式化
+      ],
+    }],
+  },
+  {
+    title: '状态',
+    dataIndex: 'status',
+    valueType: 'select',
+    valueEnum: {
+      active: { text: '激活', status: 'Success' },
+      inactive: { text: '未激活', status: 'Default' },
+    },
+    strategys: [{
+      mode: 'merge',
+      strategy: [
+        Filter({ filterType: 'select' }), // 自动从 valueEnum 生成筛选项
+        Conditional({ // 条件控制
+          visible: (record) => record.role === 'admin',
+        }),
       ],
     }],
   },
@@ -258,6 +294,9 @@ const columns = [{
 | **percentField()** | Format(percent) + Sort + Width | 百分比字段 |
 | **editableField()** | Editable + Sort | 可编辑字段 |
 | **fullField()** | Search + Sort + Required + Placeholder + Copy | 完整 CRUD 字段 |
+| **idField()** | Width + 只读 + Copy + Sort | ID 字段（主键） |
+| **statusField()** | Enum + Search + Sort + Filter | 状态字段（枚举） |
+| **actionField()** | 固定位置 + 不导出 | 操作列 |
 
 #### 使用预设
 
@@ -265,6 +304,29 @@ const columns = [{
 import { Presets } from 'pro-columns'
 
 const columns = [
+  {
+    title: 'ID',
+    dataIndex: 'id',
+    strategys: [{
+      mode: 'merge',
+      strategy: Presets.idField({ width: 80, copyable: true }),
+    }],
+  },
+  {
+    title: '状态',
+    dataIndex: 'status',
+    valueEnum: {
+      active: { text: '激活', status: 'Success' },
+      inactive: { text: '未激活', status: 'Default' },
+    },
+    strategys: [{
+      mode: 'merge',
+      strategy: Presets.statusField({
+        type: 'badge',
+        filterable: true
+      }),
+    }],
+  },
   {
     title: '金额',
     dataIndex: 'amount',
@@ -282,11 +344,10 @@ const columns = [
     }],
   },
   {
-    title: '头像',
-    dataIndex: 'avatar',
+    title: '操作',
     strategys: [{
       mode: 'merge',
-      strategy: Presets.imageField({ width: 80, height: 80 }),
+      strategy: Presets.actionField({ fixed: 'right', width: 150 }),
     }],
   },
 ]
@@ -519,6 +580,134 @@ Width({
 })
 ```
 
+#### Copy(options?)
+
+为字段添加一键复制功能。
+
+```tsx
+Copy({
+  enable?: boolean              // 是否启用，默认 true
+  text?: string | ((text, record) => string) // 自定义复制文本
+})
+```
+
+#### Link(options)
+
+为字段添加链接跳转。
+
+```tsx
+Link({
+  enable?: boolean              // 是否启用，默认 true
+  target?: '_blank' | '_self'   // 链接打开方式，默认 '_blank'
+  href?: string | ((text, record) => string) // 链接地址
+})
+```
+
+#### Image(options)
+
+为字段添加图片预览功能。
+
+```tsx
+Image({
+  enable?: boolean              // 是否启用，默认 true
+  width?: number                // 图片宽度，默认 60
+  height?: number               // 图片高度，默认 60
+  maxCount?: number             // 最大图片数量，默认 5
+})
+```
+
+#### Enum(options)
+
+增强枚举渲染（支持 Badge/Tag/Text）。
+
+```tsx
+Enum({
+  enable?: boolean              // 是否启用，默认 true
+  type?: 'badge' | 'tag' | 'text' // 渲染类型，默认 'badge'
+})
+```
+
+#### Conditional(options)
+
+条件渲染策略，根据条件动态显示/隐藏/禁用字段。
+
+```tsx
+Conditional({
+  visible?: (record, column) => boolean    // 控制显示/隐藏
+  disabled?: (record, column) => boolean   // 控制启用/禁用
+  editable?: (record, column) => boolean   // 控制可编辑状态
+})
+```
+
+#### Filter(options)
+
+高级筛选策略，自动生成筛选选项。
+
+```tsx
+Filter({
+  enable?: boolean              // 是否启用，默认 true
+  filterType?: 'select' | 'text' | 'number' | 'date' | 'dateRange' | 'custom'
+  filters?: Array<{ text: string, value: any }> // 筛选选项（不指定则从 valueEnum 自动生成）
+  onFilter?: (value, record) => boolean // 自定义筛选函数
+  filterMultiple?: boolean      // 是否多选
+  filterSearch?: boolean        // 是否支持搜索
+})
+```
+
+#### Aggregation(options)
+
+聚合统计策略，支持求和/平均/计数等。
+
+```tsx
+Aggregation({
+  enable?: boolean              // 是否启用，默认 true
+  type: 'sum' | 'avg' | 'count' | 'max' | 'min' // 聚合类型
+  precision?: number            // 精度，默认 2
+  format?: boolean              // 是否格式化，默认 false
+  aggregator?: (dataSource, column) => any // 自定义聚合函数
+})
+
+// 工具函数
+import { calculateAggregation, formatAggregation } from 'pro-columns/strategy'
+
+const total = calculateAggregation(dataSource, column)
+const formatted = formatAggregation(total, column)
+```
+
+#### Export(options)
+
+导出配置策略，控制数据导出行为。
+
+```tsx
+Export({
+  enable?: boolean              // 是否启用，默认 true
+  exportable?: boolean          // 是否可导出，默认 true
+  exportTitle?: string          // 导出时的列标题
+  exportWidth?: number          // 导出时的列宽
+  exportAlign?: 'left' | 'center' | 'right' // 导出时的对齐方式
+  exportTransform?: (value, record, column) => any // 数据转换
+  exportFormatter?: (value, record, column) => string // 格式化
+  exportOrder?: number          // 导出顺序
+  exportStyle?: {               // Excel 样式
+    color?: string
+    backgroundColor?: string
+    bold?: boolean
+    italic?: boolean
+  }
+})
+
+// 工具函数
+import {
+  filterExportableColumns,
+  sortExportColumns,
+  processExportValue
+} from 'pro-columns/strategy'
+
+const exportableColumns = filterExportableColumns(columns)
+const sortedColumns = sortExportColumns(exportableColumns)
+const exportValue = processExportValue(value, record, column)
+```
+
 ### 封装组件 API
 
 #### ProColumnsTable
@@ -748,18 +937,23 @@ pnpm format
 
 ### 已完成
 - ✅ 核心功能实现（Columns 处理器、Strategy 引擎、Component 适配器）
-- ✅ 8 个内置策略（Search、Sort、Required、Placeholder、Format、Tooltip、DefaultValue、Width）
+- ✅ 20+ 内置策略（Search、Sort、Required、Placeholder、Format、Tooltip、DefaultValue、Width、Copy、Link、Image、Enum、Validation、Permission、Transform、Editable、Conditional、Filter、Aggregation、Export）
 - ✅ 3 个组件适配器（ProTable、ProForm、ProDescription）
 - ✅ 3 个封装组件（ProColumnsTable、ProColumnsForm、ProColumnsDescription）
+- ✅ 15+ 预设配置（searchableField、requiredField、moneyField、dateField、dateTimeField、enumField、imageField、linkField、numberField、percentField、editableField、fullField、idField、statusField、actionField）
 - ✅ 场景化配置支持
 - ✅ 运行时策略支持
+- ✅ 性能优化（策略缓存、O(n) 遍历）
+- ✅ 完整的 TypeScript 类型支持
+- ✅ 367+ 单元测试覆盖
 - ✅ 完整文档和示例
 
 ### 计划中
-- ⬜ 更多内置策略（Copy、Link、Image 等）
 - ⬜ 可视化配置界面
 - ⬜ 更多组件库支持（Element UI、Vue 等）
 - ⬜ VSCode 插件支持
+- ⬜ Storybook 组件演示
+- ⬜ GitHub Actions CI/CD
 
 ## 📄 许可证
 

@@ -16,6 +16,8 @@ import { ProTableProps } from '@ant-design/pro-components';
  * 3. 应用针对性策略：将 columnStrategies 应用到指定的 column
  * 4. 应用策略处理：通过 Strategy 处理器应用所有配置的策略（支持场景）
  * 5. 返回处理后的 columns
+ *
+ * 性能优化：合并3次遍历为1次遍历，减少对象复制和内存分配
  */
 export declare const Columns: (props: ColumnsProps) => ProColumnsType_2.ColumnType[];
 

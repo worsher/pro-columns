@@ -75,7 +75,7 @@ describe('Component 管理器', () => {
 
     expect(result).toBe(columns)
     expect(consoleSpy).toHaveBeenCalledWith(
-      'Component adapter "nonExistent" not found, returning original columns'
+      '[ProColumns] Component adapter "nonExistent" not found. Returning original columns.'
     )
 
     consoleSpy.mockRestore()

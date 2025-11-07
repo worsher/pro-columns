@@ -28,6 +28,8 @@ export type ColumnsProps = {
  * 3. 应用针对性策略：将 columnStrategies 应用到指定的 column
  * 4. 应用策略处理：通过 Strategy 处理器应用所有配置的策略（支持场景）
  * 5. 返回处理后的 columns
+ *
+ * 性能优化：合并3次遍历为1次遍历，减少对象复制和内存分配
  */
 const Columns = (props: ColumnsProps): ProColumnsType.ColumnType[] => {
   const {
@@ -39,93 +41,76 @@ const Columns = (props: ColumnsProps): ProColumnsType.ColumnType[] => {
     columnStrategies,
   } = props
 
-  // 1. 处理 enums 映射
-  const columnsWithEnums = columns.map((column) => {
-    const processedColumn = { ...column }
+  // 性能优化：提前检查是否需要应用策略
+  const hasGlobalStrategies = applyStrategies && applyStrategies.length > 0
+  const hasColumnStrategies = columnStrategies && columnStrategies.length > 0
 
-    // 如果 column 中有 enumKey，则从 enums 中查找对应的枚举值
+  // 性能优化：如果有针对性策略，建立索引 Map 以加速查找（O(1) vs O(n)）
+  const columnStrategyMap = hasColumnStrategies
+    ? new Map(columnStrategies!.map((cs) => [cs.dataIndex, cs]))
+    : null
+
+  // 性能优化：合并所有处理逻辑到单次遍历中
+  const processedColumns = columns.map((column) => {
+    // 只创建一次副本，减少内存分配
+    const processedColumn: ProColumnsType.ColumnType = { ...column }
+
+    // 1. 处理 enums 映射
     if ('enumKey' in processedColumn && processedColumn.enumKey) {
-      const enumKey = processedColumn.enumKey as string
+      const enumKey = processedColumn.enumKey
       if (enums[enumKey]) {
         processedColumn.valueEnum = enums[enumKey]
       }
       // 删除 enumKey，避免传递给组件
-      delete (processedColumn as any).enumKey
+      delete processedColumn.enumKey
     }
 
-    return processedColumn
-  })
+    // 2. 应用全局运行时策略
+    if (hasGlobalStrategies) {
+      const runtimeStrategyConfig: ProColumnsType.Strategy = {
+        mode: 'merge',
+        strategy: applyStrategies!,
+      }
 
-  // 2. 应用全局运行时策略
-  const columnsWithGlobalStrategies = columnsWithEnums.map((column) => {
-    // 如果没有全局运行时策略，直接返回
-    if (!applyStrategies || applyStrategies.length === 0) {
-      return column
+      if (mergeMode) {
+        // merge 模式：将运行时策略添加到现有策略列表的末尾
+        processedColumn.strategys = [...(column.strategys || []), runtimeStrategyConfig]
+      } else {
+        // replace 模式：用运行时策略替换现有策略
+        processedColumn.strategys = [runtimeStrategyConfig]
+      }
     }
 
-    const processedColumn = { ...column }
+    // 3. 应用针对性策略（使用 Map 加速查找）
+    if (hasColumnStrategies && columnStrategyMap) {
+      const columnStrategy = columnStrategyMap.get(processedColumn.dataIndex as string)
 
-    // 创建运行时策略配置
-    const runtimeStrategyConfig: ProColumnsType.Strategy = {
-      mode: 'merge',
-      strategy: applyStrategies,
-    }
+      if (columnStrategy) {
+        // 创建针对性策略配置
+        const targetStrategyConfig: ProColumnsType.Strategy = {
+          mode: 'merge',
+          strategy: columnStrategy.strategies,
+        }
 
-    // 根据 mergeMode 决定如何应用运行时策略
-    if (mergeMode) {
-      // merge 模式：将运行时策略添加到现有策略列表的末尾
-      processedColumn.strategys = [...(column.strategys || []), runtimeStrategyConfig]
-    } else {
-      // replace 模式：用运行时策略替换现有策略
-      processedColumn.strategys = [runtimeStrategyConfig]
-    }
+        // 根据该 column 的 mergeMode 决定如何应用针对性策略
+        const columnMergeMode =
+          columnStrategy.mergeMode !== undefined ? columnStrategy.mergeMode : true
 
-    return processedColumn
-  })
-
-  // 3. 应用针对性策略
-  const columnsWithColumnStrategies = columnsWithGlobalStrategies.map((column) => {
-    // 如果没有针对性策略配置，直接返回
-    if (!columnStrategies || columnStrategies.length === 0) {
-      return column
-    }
-
-    // 查找是否有针对该 column 的策略配置
-    const columnStrategy = columnStrategies.find(
-      (cs) => cs.dataIndex === (column.dataIndex as string)
-    )
-
-    // 如果没有找到针对该 column 的配置，直接返回
-    if (!columnStrategy) {
-      return column
-    }
-
-    const processedColumn = { ...column }
-
-    // 创建针对性策略配置
-    const targetStrategyConfig: ProColumnsType.Strategy = {
-      mode: 'merge',
-      strategy: columnStrategy.strategies,
-    }
-
-    // 根据该 column 的 mergeMode 决定如何应用针对性策略
-    const columnMergeMode = columnStrategy.mergeMode !== undefined ? columnStrategy.mergeMode : true
-
-    if (columnMergeMode) {
-      // merge 模式：将针对性策略添加到现有策略列表的末尾
-      processedColumn.strategys = [...(processedColumn.strategys || []), targetStrategyConfig]
-    } else {
-      // replace 模式：用针对性策略替换该 column 的所有策略（包括全局运行时策略）
-      processedColumn.strategys = [targetStrategyConfig]
+        if (columnMergeMode) {
+          // merge 模式：将针对性策略添加到现有策略列表的末尾
+          processedColumn.strategys = [...(processedColumn.strategys || []), targetStrategyConfig]
+        } else {
+          // replace 模式：用针对性策略替换该 column 的所有策略（包括全局运行时策略）
+          processedColumn.strategys = [targetStrategyConfig]
+        }
+      }
     }
 
     return processedColumn
   })
 
   // 4. 应用策略处理（传入场景参数）
-  const processedColumns = Strategy(columnsWithColumnStrategies, scene)
-
-  return processedColumns
+  return Strategy(processedColumns, scene)
 }
 
 export default Columns

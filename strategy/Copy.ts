@@ -45,12 +45,14 @@ const Copy = (options: CopyStrategyOptions = {}): ProColumnsType.StrategyItem =>
       return {}
     }
 
+    // 注意：ProColumns 的 copyable 实际支持对象配置，但类型定义为 boolean
+    // 这里使用类型断言来支持更丰富的配置（这是 ProColumns 实际支持的功能）
     return {
       copyable: {
         text: (text: any) => (text ? String(text) : ''),
         tooltips: [tooltipText, successText],
-      } as any,
-    }
+      },
+    } as unknown as Partial<ProColumnsType.ColumnType>
   })
 }
 

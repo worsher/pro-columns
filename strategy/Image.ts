@@ -1,6 +1,7 @@
 import { ProColumnsType } from '../type'
 import { createStrategy, hasField } from './utils'
 import React from 'react'
+import { Image as AntdImage, Space } from 'antd'
 
 /**
  * Image 策略配置
@@ -91,14 +92,11 @@ const Image = (options: ImageStrategyOptions = {}): ProColumnsType.StrategyItem 
       const hasMore = imageUrls.length > maxCount
 
       // 使用 Antd Image 组件
-      const Image = require('antd').Image
-      const Space = require('antd').Space
-
       return React.createElement(
         Space,
         { size: 8 },
         ...displayUrls.map((url, index) =>
-          React.createElement(Image, {
+          React.createElement(AntdImage, {
             key: index,
             src: url,
             width,

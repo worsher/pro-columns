@@ -1,6 +1,8 @@
 import { ProColumnsType } from '../type'
 import { createStrategy, hasField, getField } from './utils'
 import React from 'react'
+import { Badge, Tag } from 'antd'
+import type { BadgeProps } from 'antd'
 
 /**
  * Enum 策略配置
@@ -77,15 +79,13 @@ const Enum = (options: EnumStrategyOptions = {}): ProColumnsType.StrategyItem =>
       const status = enumItem.status || colorMap[value] || defaultColor
 
       if (type === 'badge') {
-        const Badge = require('antd').Badge
         return React.createElement(Badge, {
-          status: status as any,
+          status: status as BadgeProps['status'],
           text,
         })
       }
 
       if (type === 'tag') {
-        const Tag = require('antd').Tag
         return React.createElement(Tag, { color: status }, text)
       }
 

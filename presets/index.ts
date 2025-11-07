@@ -11,6 +11,7 @@ import {
   Image,
   Enum,
 } from '../strategy'
+import { createStrategy } from '../strategy/utils'
 
 /**
  * 预设类型
@@ -132,10 +133,10 @@ class Presets {
    */
   static readonlyField(): ProColumnsType.StrategyItem[] {
     return [
-      {
+      createStrategy(() => ({
         fieldProps: { disabled: true },
         editable: false,
-      } as any,
+      })),
     ]
   }
 
@@ -191,12 +192,16 @@ class Presets {
   }): ProColumnsType.StrategyItem[] {
     const { type = 'text', onSave } = options || {}
     return [
-      {
-        editable: () => ({
-          type,
-          onSave,
-        }),
-      } as any,
+      createStrategy(() => {
+        // 注意：ProColumns 的 editable 实际支持函数返回配置对象，但类型定义较简单
+        // 这里使用类型断言来支持更丰富的配置（这是 ProColumns 实际支持的功能）
+        return {
+          editable: () => ({
+            type,
+            onSave,
+          }),
+        } as unknown as Partial<ProColumnsType.ColumnType>
+      }),
       Sort(),
     ]
   }
@@ -208,6 +213,121 @@ class Presets {
    */
   static fullField(): ProColumnsType.StrategyItem[] {
     return [Search(), Sort(), Required(), Placeholder({ includeSearch: true }), Copy()]
+  }
+
+  /**
+   * ID 字段
+   * 包含：固定宽度、只读、复制、排序
+   * 适用于主键、唯一标识等字段
+   */
+  static idField(options?: {
+    width?: number
+    copyable?: boolean
+    sortable?: boolean
+  }): ProColumnsType.StrategyItem[] {
+    const { width = 80, copyable = true, sortable = true } = options || {}
+
+    const strategies: ProColumnsType.StrategyItem[] = [
+      createStrategy(() => ({
+        width,
+        ellipsis: true,
+        fieldProps: { disabled: true },
+        hideInForm: true, // ID 通常不在表单中显示
+      })),
+    ]
+
+    if (copyable) {
+      strategies.push(Copy())
+    }
+
+    if (sortable) {
+      strategies.push(Sort())
+    }
+
+    return strategies
+  }
+
+  /**
+   * 状态字段
+   * 包含：状态枚举、搜索、排序、筛选
+   * 适用于状态、类型等枚举字段
+   */
+  static statusField(options?: {
+    type?: 'badge' | 'tag' | 'text'
+    searchable?: boolean
+    sortable?: boolean
+    filterable?: boolean
+  }): ProColumnsType.StrategyItem[] {
+    const {
+      type = 'badge',
+      searchable = true,
+      sortable = true,
+      filterable = true,
+    } = options || {}
+
+    const strategies: ProColumnsType.StrategyItem[] = [
+      Enum({ type }),
+      Width({ table: 100, form: 'md' }),
+    ]
+
+    if (searchable) {
+      strategies.push(Search())
+    }
+
+    if (sortable) {
+      strategies.push(Sort())
+    }
+
+    if (filterable) {
+      // 注意：Filter 策略需要在实际使用时配置 filters 或依赖 valueEnum
+      strategies.push(
+        createStrategy((column) => ({
+          // 自动从 valueEnum 生成筛选选项的逻辑已在 Filter 策略中实现
+          // 这里只需要标记需要筛选功能
+          filters:
+            column.valueEnum
+              ? Object.keys(column.valueEnum).map((key) => {
+                  const enumItem = (column.valueEnum as Record<string, any>)[key]
+                  return {
+                    text: typeof enumItem === 'object' && enumItem.text ? enumItem.text : String(enumItem),
+                    value: key,
+                  }
+                })
+              : undefined,
+          filterSearch: true,
+        }))
+      )
+    }
+
+    return strategies
+  }
+
+  /**
+   * 操作列
+   * 包含：固定在右侧、固定宽度、不导出
+   * 适用于操作按钮列
+   */
+  static actionField(options?: {
+    width?: number
+    fixed?: 'left' | 'right'
+  }): ProColumnsType.StrategyItem[] {
+    const { width = 150, fixed = 'right' } = options || {}
+
+    return [
+      createStrategy(() => ({
+        title: '操作',
+        dataIndex: 'action',
+        valueType: 'option',
+        width,
+        fixed,
+        hideInSearch: true,
+        hideInForm: true,
+        hideInDescriptions: true,
+        // 操作列通常不导出
+        __export: true,
+        __exportable: false,
+      })),
+    ]
   }
 }
 
