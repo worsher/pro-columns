@@ -1,6 +1,8 @@
 import { defineConfig } from 'vite'
 import { resolve } from 'path'
 import dts from 'vite-plugin-dts'
+import { visualizer } from 'rollup-plugin-visualizer'
+import viteCompression from 'vite-plugin-compression'
 
 export default defineConfig({
   build: {
@@ -20,12 +22,26 @@ export default defineConfig({
           'react-dom': 'ReactDOM',
           '@ant-design/pro-components': 'ProComponents',
           antd: 'antd'
-        }
+        },
+        // 代码分割优化
+        manualChunks: undefined,
       }
     },
     sourcemap: true,
     // 清空输出目录
-    emptyOutDir: true
+    emptyOutDir: true,
+    // 代码压缩优化
+    minify: 'terser',
+    terserOptions: {
+      compress: {
+        drop_console: false,
+        drop_debugger: true,
+        pure_funcs: ['console.log'],
+      },
+      format: {
+        comments: false,
+      },
+    },
   },
   plugins: [
     dts({
@@ -34,11 +50,29 @@ export default defineConfig({
         'type.d.ts',
         'lib/**/*',
         'components/**/*',
-        'strategy/**/*'
+        'strategy/**/*',
+        'presets/**/*'
       ],
       exclude: ['**/*.test.ts', '**/*.spec.ts', 'node_modules'],
       rollupTypes: true
-    })
+    }),
+    // 打包分析
+    visualizer({
+      open: false,
+      gzipSize: true,
+      brotliSize: true,
+      filename: 'dist/stats.html',
+    }),
+    // Gzip 压缩
+    viteCompression({
+      algorithm: 'gzip',
+      ext: '.gz',
+    }),
+    // Brotli 压缩
+    viteCompression({
+      algorithm: 'brotliCompress',
+      ext: '.br',
+    }),
   ],
   resolve: {
     alias: {

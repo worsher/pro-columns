@@ -1,5 +1,11 @@
 # Pro-Columns
 
+[![CI](https://github.com/worsher/pro-columns/actions/workflows/ci.yml/badge.svg)](https://github.com/worsher/pro-columns/actions/workflows/ci.yml)
+[![npm version](https://img.shields.io/npm/v/pro-columns.svg)](https://www.npmjs.com/package/pro-columns)
+[![npm downloads](https://img.shields.io/npm/dm/pro-columns.svg)](https://www.npmjs.com/package/pro-columns)
+[![codecov](https://codecov.io/gh/worsher/pro-columns/branch/main/graph/badge.svg)](https://codecov.io/gh/worsher/pro-columns)
+[![license](https://img.shields.io/npm/l/pro-columns.svg)](https://github.com/worsher/pro-columns/blob/main/LICENSE)
+
 基于 [Ant Design Pro Components](https://procomponents.ant.design/) 的 columns 扩展库，提供强大的策略系统和组件适配能力。
 
 ## ✨ 特性

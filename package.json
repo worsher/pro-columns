@@ -32,7 +32,10 @@
     "release": "standard-version",
     "release:minor": "standard-version --release-as minor",
     "release:major": "standard-version --release-as major",
-    "release:first": "standard-version --first-release"
+    "release:first": "standard-version --first-release",
+    "storybook": "storybook dev -p 6006",
+    "build-storybook": "storybook build",
+    "analyze": "node scripts/analyze-size.js"
   },
   "keywords": [
     "pro-components",
@@ -61,6 +64,12 @@
     "@ant-design/pro-components": "^2.8.1"
   },
   "devDependencies": {
+    "@storybook/addon-essentials": "^8.6.14",
+    "@storybook/addon-interactions": "^8.6.14",
+    "@storybook/addon-links": "^10.0.6",
+    "@storybook/blocks": "^8.6.14",
+    "@storybook/react": "^10.0.6",
+    "@storybook/react-vite": "^10.0.6",
     "@testing-library/jest-dom": "^6.9.1",
     "@testing-library/react": "^16.3.0",
     "@types/node": "^20.11.5",
@@ -79,9 +88,13 @@
     "prettier": "^3.2.4",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
+    "rollup-plugin-visualizer": "^6.0.5",
     "standard-version": "^9.5.0",
+    "storybook": "^10.0.6",
+    "terser": "^5.44.1",
     "typescript": "^5.3.3",
     "vite": "^5.0.12",
+    "vite-plugin-compression": "^0.5.1",
     "vite-plugin-dts": "^3.7.1",
     "vitest": "^1.2.1"
   }

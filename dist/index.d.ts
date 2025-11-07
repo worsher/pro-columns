@@ -1,7 +1,6 @@
 import { default as default_2 } from 'react';
 import { JSX as JSX_2 } from 'react/jsx-runtime';
 import { ParamsType } from '@ant-design/pro-components';
-import { default as Presets } from './presets';
 import { ProColumnsType } from './type';
 import { ProColumnsType as ProColumnsType_2 } from '../type';
 import { ProColumnsType as ProColumnsType_3 } from '../../type';
@@ -495,7 +494,152 @@ declare type PlaceholderStrategyOptions = {
     includeSearch?: boolean;
 };
 
-export { Presets }
+/**
+ * 预设类型
+ */
+declare type PresetFunction = () => ProColumnsType_2.StrategyItem[];
+
+/**
+ * 预设管理类
+ */
+export declare class Presets {
+    /**
+     * 注册自定义预设
+     * @param name 预设名称
+     * @param preset 预设函数
+     */
+    static register(name: string, preset: PresetFunction): void;
+    /**
+     * 获取预设
+     * @param name 预设名称
+     * @returns 预设函数
+     */
+    static get(name: string): PresetFunction | undefined;
+    /**
+     * 获取所有预设名称
+     * @returns 预设名称列表
+     */
+    static list(): string[];
+    /**
+     * 清空所有预设（主要用于测试）
+     */
+    static clear(): void;
+    /**
+     * 可搜索字段
+     * 包含：搜索、排序、占位符
+     */
+    static searchableField(): ProColumnsType_2.StrategyItem[];
+    /**
+     * 必填字段
+     * 包含：必填、占位符
+     */
+    static requiredField(): ProColumnsType_2.StrategyItem[];
+    /**
+     * 金额字段
+     * 包含：金额格式化、宽度配置、排序
+     */
+    static moneyField(options?: {
+        precision?: number;
+    }): ProColumnsType_2.StrategyItem[];
+    /**
+     * 日期字段
+     * 包含：日期格式化、排序、宽度配置
+     */
+    static dateField(options?: {
+        format?: string;
+    }): ProColumnsType_2.StrategyItem[];
+    /**
+     * 日期时间字段
+     * 包含：日期时间格式化、排序、宽度配置
+     */
+    static dateTimeField(): ProColumnsType_2.StrategyItem[];
+    /**
+     * 枚举字段
+     * 包含：枚举渲染、搜索、必填、占位符
+     */
+    static enumField(options?: {
+        type?: 'badge' | 'tag' | 'text';
+    }): ProColumnsType_2.StrategyItem[];
+    /**
+     * 只读字段
+     * 包含：禁用表单输入
+     */
+    static readonlyField(): ProColumnsType_2.StrategyItem[];
+    /**
+     * 图片字段
+     * 包含：图片预览、宽度配置
+     */
+    static imageField(options?: {
+        width?: number;
+        height?: number;
+        maxCount?: number;
+    }): ProColumnsType_2.StrategyItem[];
+    /**
+     * 链接字段
+     * 包含：链接跳转、宽度配置、复制
+     */
+    static linkField(options?: {
+        target?: '_blank' | '_self';
+    }): ProColumnsType_2.StrategyItem[];
+    /**
+     * 数字字段
+     * 包含：数字格式化、排序、宽度配置
+     */
+    static numberField(options?: {
+        precision?: number;
+    }): ProColumnsType_2.StrategyItem[];
+    /**
+     * 百分比字段
+     * 包含：百分比格式化、排序、宽度配置
+     */
+    static percentField(options?: {
+        precision?: number;
+    }): ProColumnsType_2.StrategyItem[];
+    /**
+     * 可编辑字段（表格内编辑）
+     * 包含：可编辑配置、排序
+     */
+    static editableField(options?: {
+        type?: 'text' | 'select' | 'date' | 'dateTime' | 'digit';
+        onSave?: (key: any, record: any, newValue: any) => Promise<any>;
+    }): ProColumnsType_2.StrategyItem[];
+    /**
+     * 完整 CRUD 字段
+     * 包含：搜索、排序、必填、占位符、复制
+     * 适用于常规文本字段
+     */
+    static fullField(): ProColumnsType_2.StrategyItem[];
+    /**
+     * ID 字段
+     * 包含：固定宽度、只读、复制、排序
+     * 适用于主键、唯一标识等字段
+     */
+    static idField(options?: {
+        width?: number;
+        copyable?: boolean;
+        sortable?: boolean;
+    }): ProColumnsType_2.StrategyItem[];
+    /**
+     * 状态字段
+     * 包含：状态枚举、搜索、排序、筛选
+     * 适用于状态、类型等枚举字段
+     */
+    static statusField(options?: {
+        type?: 'badge' | 'tag' | 'text';
+        searchable?: boolean;
+        sortable?: boolean;
+        filterable?: boolean;
+    }): ProColumnsType_2.StrategyItem[];
+    /**
+     * 操作列
+     * 包含：固定在右侧、固定宽度、不导出
+     * 适用于操作按钮列
+     */
+    static actionField(options?: {
+        width?: number;
+        fixed?: 'left' | 'right';
+    }): ProColumnsType_2.StrategyItem[];
+}
 
 /**
  * ProColumnsDescription 组件
