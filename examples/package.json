@@ -14,7 +14,7 @@
     "antd": "^5.13.2",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "react-router-dom": "^6.21.3",
+    "react-router-dom": "^7.9.5",
     "pro-columns": "workspace:*"
   },
   "devDependencies": {
