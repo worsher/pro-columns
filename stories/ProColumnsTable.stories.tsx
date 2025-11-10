@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react'
-import { ProColumnsTable } from '../components/ProColumnsTable'
-import { Presets } from '../presets'
+import ProColumnsTable from '../components/ProColumnsTable'
+import Presets from '../presets'
 import { Search, Sort, Filter } from '../strategy'
 
 const meta: Meta<typeof ProColumnsTable> = {

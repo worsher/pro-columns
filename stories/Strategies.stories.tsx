@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react'
-import { ProColumnsTable } from '../components/ProColumnsTable'
+import ProColumnsTable from '../components/ProColumnsTable'
 import {
   Search,
   Sort,
