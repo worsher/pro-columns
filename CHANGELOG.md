@@ -2,6 +2,21 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.2.0](https://github.com/worsher/pro-columns/compare/v1.1.0...v1.2.0) (2025-11-26)
+
+
+### 🔧 Chores
+
+* update pnpm-lock.yaml with new dependencies and versions to npm publish ([15858af](https://github.com/worsher/pro-columns/commit/15858af6194dba7f28b0bc8008e87121a98ae49b))
+
+
+### ✨ Features
+
+* update pnpm version ([d840f20](https://github.com/worsher/pro-columns/commit/d840f20398dc4b00b2d7799bc22acda57a492fdd))
+* 增加storybook ([c07ccfb](https://github.com/worsher/pro-columns/commit/c07ccfbb8708b722ea66a79e419124254d90cd10))
+* 新增策略，优化ts ([6748243](https://github.com/worsher/pro-columns/commit/67482436b628533fe8db29877f950a21213e0354))
+* 补充ci cd ([6e64096](https://github.com/worsher/pro-columns/commit/6e6409653661e838cdbf60a05712713c2c5a92f9))
+
 ## 1.1.0 (2025-11-05)
 
 
