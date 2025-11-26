@@ -1,6 +1,6 @@
 {
   "name": "pro-columns",
-  "version": "1.3.0",
+  "version": "1.4.0",
   "description": "针对pro-components的columns进行兼容处理，增加规则处理，提供配置化能力",
   "type": "module",
   "main": "./dist/pro-columns.cjs",

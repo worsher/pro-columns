@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.4.0](https://github.com/worsher/pro-columns/compare/v1.3.0...v1.4.0) (2025-11-26)
+
+
+### ✨ Features
+
+* fix lint error ([b6ba4bd](https://github.com/worsher/pro-columns/commit/b6ba4bdbeb2faec4e05fe82018bd87404392af29))
+
 ## [1.3.0](https://github.com/worsher/pro-columns/compare/v1.2.0...v1.3.0) (2025-11-26)
 
 
