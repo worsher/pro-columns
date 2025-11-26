@@ -41,12 +41,22 @@ jobs:
       - name: Build
         run: pnpm run build
 
+      - name: Debug NPM_TOKEN
+        run: |
+          if [ -z "$DEBUG_NPM_TOKEN" ]; then
+            echo "Error: NPM_TOKEN secret is empty or not set"
+          else
+            echo "Success: NPM_TOKEN secret is present (length: ${#DEBUG_NPM_TOKEN})"
+          fi
+        env:
+          DEBUG_NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+
       - name: Publish to npm
         run: |
           pnpm config set //registry.npmjs.org/:_authToken=${NPM_TOKEN}
           pnpm publish --no-git-checks
         env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
 
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v1
