@@ -818,7 +818,7 @@ const Permission = (options = {}) => {
     disableWhenNoPermission = false,
     checker
   } = options;
-  return createStrategy((column, scene) => {
+  return createStrategy((_column, scene) => {
     if (!enable) {
       return {};
     }
@@ -907,7 +907,7 @@ const Editable = (options = {}) => {
       type: valueType
     };
     if (editableConfig.onSave) {
-      editableOptions.onSave = async (key, record, originRow, newLineConfig) => {
+      editableOptions.onSave = async (key, record, _originRow, _newLineConfig) => {
         const dataIndex = getField(column, "dataIndex");
         const newValue = dataIndex ? record[dataIndex] : void 0;
         return editableConfig.onSave(key, record, newValue);

@@ -1,1 +1,48 @@
+# Dependencies
 node_modules
+
+# Build output
+dist
+*.local
+
+# Coverage reports
+coverage
+*.lcov
+
+# IDE
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+.idea
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+logs
+*.log
+npm-debug.log*
+pnpm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Environment variables
+.env
+.env.local
+.env.*.local
+
+# Temporary files
+*.tmp
+*.temp
+
+# Package manager
+.pnpm-debug.log
+
+# Storybook build output
+storybook-static

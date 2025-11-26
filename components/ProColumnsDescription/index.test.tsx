@@ -7,7 +7,7 @@ import Component from '../../lib/component'
 // Mock Component.transform
 vi.mock('../../lib/component', () => ({
   default: {
-    transform: vi.fn((name, columns) => columns),
+    transform: vi.fn((_name, columns) => columns),
   },
 }))
 

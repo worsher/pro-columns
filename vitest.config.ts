@@ -8,15 +8,32 @@ export default defineConfig({
     setupFiles: [],
     coverage: {
       provider: 'v8',
-      reporter: ['text', 'json', 'html'],
+      reporter: ['text', 'json', 'html', 'lcov'],
       exclude: [
         'node_modules/',
         'dist/',
         'examples/',
+        '.storybook/',
+        'stories/',
+        'scripts/',
+        'storybook-static/',
         '**/*.config.ts',
+        '**/*.config.js',
         '**/*.d.ts',
         '**/*.test.ts',
-        '**/*.spec.ts'
+        '**/*.test.tsx',
+        '**/*.spec.ts',
+        '.eslintrc.cjs',
+        'USAGE_EXAMPLE.tsx'
+      ],
+      include: [
+        'src/**/*.ts',
+        'src/**/*.tsx',
+        'lib/**/*.ts',
+        'adapter/**/*.ts',
+        'strategy/**/*.ts',
+        'components/**/*.tsx',
+        'presets/**/*.ts'
       ],
       all: true,
       lines: 80,

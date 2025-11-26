@@ -99,7 +99,7 @@ const Permission = (options: PermissionStrategyOptions = {}): ProColumnsType.Str
     checker,
   } = options
 
-  return createStrategy((column, scene) => {
+  return createStrategy((_column, scene) => {
     // 如果未启用，则跳过
     if (!enable) {
       return {}

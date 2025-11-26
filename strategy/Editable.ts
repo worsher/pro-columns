@@ -76,7 +76,7 @@ const Editable = (options: EditableStrategyOptions = {}): ProColumnsType.Strateg
 
     // 添加保存回调
     if (editableConfig.onSave) {
-      editableOptions.onSave = async (key: any, record: any, originRow: any, newLineConfig: any) => {
+      editableOptions.onSave = async (key: any, record: any, _originRow: any, _newLineConfig: any) => {
         const dataIndex = getField<string>(column, 'dataIndex')
         const newValue = dataIndex ? record[dataIndex] : undefined
         return editableConfig.onSave!(key, record, newValue)

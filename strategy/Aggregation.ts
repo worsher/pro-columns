@@ -115,7 +115,7 @@ const Aggregation = (options: AggregationStrategyOptions = {}): ProColumnsType.S
     showEmptyValue = true,
   } = options
 
-  return createStrategy((column, scene) => {
+  return createStrategy((_column, scene) => {
     // 如果未启用或不在 table 场景，则跳过
     if (!enable || scene !== 'table') {
       return {}
