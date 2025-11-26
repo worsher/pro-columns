@@ -1,6 +1,6 @@
 {
   "name": "pro-columns",
-  "version": "1.4.0",
+  "version": "1.4.1",
   "description": "针对pro-components的columns进行兼容处理，增加规则处理，提供配置化能力",
   "type": "module",
   "main": "./dist/pro-columns.cjs",
@@ -30,6 +30,7 @@
     "type-check": "tsc --noEmit",
     "prepublishOnly": "npm run test:run && npm run build",
     "release": "standard-version",
+    "release:patch": "standard-version --release-as patch",
     "release:minor": "standard-version --release-as minor",
     "release:major": "standard-version --release-as major",
     "release:first": "standard-version --first-release",
