@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.4.3](https://github.com/worsher/pro-columns/compare/v1.4.2...v1.4.3) (2025-11-26)
+
+
+### 🐛 Bug Fixes
+
+* debug npm token ([ddee639](https://github.com/worsher/pro-columns/commit/ddee639da9d3ecfec2d11242334033dc510083db))
+
 ### [1.4.2](https://github.com/worsher/pro-columns/compare/v1.4.1...v1.4.2) (2025-11-26)
 
 
