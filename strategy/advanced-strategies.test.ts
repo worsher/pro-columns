@@ -625,7 +625,7 @@ describe('Editable 策略', () => {
       const strategy = Editable({ type: 'digit' })
       const result = strategy(column, 'table')
 
-      const editableConfig = (result.editable as Function)()
+      const editableConfig = (result.editable as () => any)()
       expect(editableConfig.type).toBe('digit')
     })
 
@@ -639,7 +639,7 @@ describe('Editable 策略', () => {
       const strategy = Editable()
       const result = strategy(column, 'table')
 
-      const editableConfig = (result.editable as Function)()
+      const editableConfig = (result.editable as () => any)()
       expect(editableConfig.type).toBe('date')
     })
 
@@ -652,7 +652,7 @@ describe('Editable 策略', () => {
       const strategy = Editable()
       const result = strategy(column, 'table')
 
-      const editableConfig = (result.editable as Function)()
+      const editableConfig = (result.editable as () => any)()
       expect(editableConfig.type).toBe('text')
     })
   })
@@ -671,7 +671,7 @@ describe('Editable 策略', () => {
       })
       const result = strategy(column, 'table')
 
-      const editableConfig = (result.editable as Function)()
+      const editableConfig = (result.editable as () => any)()
       expect(editableConfig.onSave).toBeDefined()
 
       // 测试 onSave 调用
@@ -692,7 +692,7 @@ describe('Editable 策略', () => {
       })
       const result = strategy(column, 'table')
 
-      const editableConfig = (result.editable as Function)()
+      const editableConfig = (result.editable as () => any)()
       expect(editableConfig.onCancel).toBeDefined()
 
       // 测试 onCancel 调用
@@ -718,7 +718,7 @@ describe('Editable 策略', () => {
       })
       const result = strategy(column, 'table')
 
-      const editableConfig = (result.editable as Function)()
+      const editableConfig = (result.editable as () => any)()
       expect(editableConfig.formItemProps).toEqual({
         rules: [{ required: true, message: '请输入年龄' }],
       })
@@ -741,7 +741,7 @@ describe('Editable 策略', () => {
       })
       const result = strategy(column, 'table')
 
-      const editableConfig = (result.editable as Function)()
+      const editableConfig = (result.editable as () => any)()
       expect(editableConfig.fieldProps).toEqual({
         min: 0,
         max: 999999,
@@ -791,7 +791,7 @@ describe('Editable 策略', () => {
       })
       const result = strategy(column, 'table')
 
-      const editableConfig = (result.editable as Function)()
+      const editableConfig = (result.editable as () => any)()
 
       expect(editableConfig.type).toBe('textarea')
       expect(editableConfig.onSave).toBeDefined()

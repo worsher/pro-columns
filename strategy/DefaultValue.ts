@@ -49,7 +49,7 @@ function inferDefaultValue(column: ProColumnsType.ColumnType): any {
       return []
 
     case 'select':
-    case 'radio':
+    case 'radio': {
       // 如果有 valueEnum，可以尝试获取第一个选项
       const valueEnum = getField<any>(column, 'valueEnum')
       if (valueEnum && typeof valueEnum === 'object') {
@@ -57,6 +57,7 @@ function inferDefaultValue(column: ProColumnsType.ColumnType): any {
         return firstKey || null
       }
       return null
+    }
 
     case 'textarea':
     case 'text':

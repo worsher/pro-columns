@@ -83,13 +83,14 @@ const Transform = (options: TransformStrategyOptions = {}): ProColumnsType.Strat
       if (output) {
         // 优先使用 convertValue（ProForm 推荐）
         if (!existingConvertValue) {
-          ;(result as Record<string, any>).convertValue = (value: any, record: any) =>
-            output(value, record)
+          const resultWithConvert = result as Record<string, any>
+          resultWithConvert.convertValue = (value: any, record: any) => output(value, record)
         }
 
         // 也支持 transform（某些场景可能需要）
         if (!existingTransform) {
-          ;(result as Record<string, any>).transform = (value: any) => output(value)
+          const resultWithTransform = result as Record<string, any>
+          resultWithTransform.transform = (value: any) => output(value)
         }
       }
     }
