@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.4.2](https://github.com/worsher/pro-columns/compare/v1.4.1...v1.4.2) (2025-11-26)
+
+
+### 🐛 Bug Fixes
+
+* change secret name ([e47f53c](https://github.com/worsher/pro-columns/commit/e47f53c44b3b7bf58314739b7fff56c734374457))
+
 ### [1.4.1](https://github.com/worsher/pro-columns/compare/v1.4.0...v1.4.1) (2025-11-26)
 
 
